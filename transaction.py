@@ -14,15 +14,18 @@ class Transaction(abc.ABC):
     t_mon = 0
     t_dom = 0
 
-    # def __init__(self, ):
+    def __init__(self, row: tuple):
+        self.date(row[1])
+        self.amount = row[2]
+        self.name = row[5]
 
-    def __init__(self, name: str, amnt: float, frq: int, cat: str):
-        self.name = name
-        self.amount = amnt
-        self.frequency = frq
-        self.category = cat
+    # def __init__(self, name: str, amnt: float, frq: int, cat: str):
+    #     self.name = name
+    #     self.amount = amnt
+    #     self.frequency = frq
+    #     self.category = cat
 
-        self.cost_per_day = self.amount / self.frequency
+    #     self.cost_per_day = self.amount / self.frequency
 
     def monthly(self):
         """ amount per month
@@ -39,7 +42,7 @@ class Transaction(abc.ABC):
         """
         self.t_mon,self.t_dom,self.t_year = string.split(sep="/")
     def __str__(self):
-        return f"{self.t_year}/{self.t_mon}/{self.t_dom}"
+        return f"{self.t_year}/{self.t_mon}/{self.t_dom}\t{self.amount} -> {self.name}"
 
 
 
