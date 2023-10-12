@@ -3,13 +3,17 @@
 import abc
 import datetime
 
-categories = [
+main_categories = {
     "Transfer",
     "Rent",
     "Gas",
     "Groceries",
     
-]
+}
+
+sub_categories = {
+    "Transfer"
+}
 
 class Transaction(abc.ABC):
     """ TODO:
