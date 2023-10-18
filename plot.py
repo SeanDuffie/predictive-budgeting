@@ -17,8 +17,8 @@ from database import Database
 #     title="MSFT Stock", height=325
 # )
 
-df = Database()
-# df = Database(path="./database/Year End All Payment Methods100723.csv")
+# df = Database()
+df = Database(path="./database/Year End All Payment Methods100723.csv")
 parent, child, sums = df.sum_cats()
 
 data1 = dict(
@@ -28,10 +28,9 @@ data1 = dict(
 )
 
 fig1 = px.sunburst(
-    data1,
-    names="children",
-    parents="parents",
-    values="value",
+    df.d_frame,
+    path=["Master Category", "Subcategory"],
+    values="Amount"
 )
 
 # fig2 = px.line(
