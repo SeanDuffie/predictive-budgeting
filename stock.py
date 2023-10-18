@@ -1,8 +1,14 @@
-import yfinance as yf
-import pandas as pd
+""" stock.py
+    
+"""
 import numpy as np
+import pandas as pd
+import yfinance as yf
+
 
 class Stock:
+    """_summary_
+    """
     def __init__(self, title) -> None:
         self.title = title
         self.refresh()

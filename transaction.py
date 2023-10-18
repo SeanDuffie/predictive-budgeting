@@ -3,22 +3,12 @@
 import abc
 import datetime
 
-main_categories = {
-    "Transfer",
-    "Rent",
-    "Gas",
-    "Groceries",
-    
-}
-
-sub_categories = {
-    "Transfer"
-}
 
 class Transaction(abc.ABC):
     """ TODO:
     """
     category = 0
+    income = False
 
     def __init__(self, row: tuple):
         self.date = datetime.datetime.strptime(row[1], "%m/%d/%Y")
