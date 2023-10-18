@@ -17,7 +17,8 @@ from database import Database
 #     title="MSFT Stock", height=325
 # )
 
-df = Database("./database/Year End All Payment Methods100723.csv")
+df = Database()
+# df = Database(path="./database/Year End All Payment Methods100723.csv")
 parent, child, sums = df.sum_cats()
 
 data1 = dict(
