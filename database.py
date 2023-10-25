@@ -17,15 +17,15 @@ References:
 - https://mint.intuit.com/
 
 """
-import os
 # import sqlite3
-# import logging
+import logging
+import os
 import sys
+from datetime import datetime
 from tkinter import filedialog
 
 import numpy as np
 import pandas
-from datetime import datetime
 
 from transaction import Transaction  # , Expense, Income
 
@@ -35,10 +35,10 @@ class Database:
     """ Objectified database for budget organization
     """
     def __init__(self, path: str = ""):
-        # # Initial Logger Settings
-        # fmt_main = "%(asctime)s\t| %(levelname)s\t| %(message)s"
-        # logging.basicConfig(format=fmt_main, level=logging.INFO,
-        #             datefmt="%Y-%m-%d %H:%M:%S")
+        # Initial Logger Settings
+        fmt_main = "%(asctime)s\t| %(levelname)s\t| %(message)s"
+        logging.basicConfig(format=fmt_main, level=logging.INFO,
+                    datefmt="%Y-%m-%d %H:%M:%S")
 
         # Validate the path
         if path == "" or not os.path.exists(path):
@@ -50,7 +50,7 @@ class Database:
                 ],
                 initialdir=f"{RTDIR}\\database\\")
             if path == "":
-                print("Error: path blank")
+                logging.error("Path blank. Exiting...")
                 sys.exit(1)
 
         # Read in the data
@@ -131,7 +131,13 @@ class AmexReport:
     recommend placing it in the "./database" directory TODO: adjust location for raw files later
     """
     def __init__(self, path: str = "") -> None:
-        if path == "":
+        # Initial Logger Settings
+        fmt_main = "%(asctime)s\t| %(levelname)s\t| %(message)s"
+        logging.basicConfig(format=fmt_main, level=logging.INFO,
+                    datefmt="%Y-%m-%d %H:%M:%S")
+
+        # Validate Path
+        if path == "" or not os.path.exists(path):
             path = filedialog.askopenfilename(
                 title="Select American Express Report",
                 filetypes=[
@@ -139,11 +145,14 @@ class AmexReport:
                 ],
                 initialdir=f"{RTDIR}\\database\\")
 
-        with open(file=path, mode="r", encoding="utf8") as csv:
-            self.d_frame = pandas.DataFrame(data=csv)
+            if path == "":
+                logging.error("Path blank. Exiting...")
+                sys.exit(1)
+
+        # Read in the data
+        self.d_frame = pandas.read_csv(path)
 
         print(self.d_frame.head())
-        # print(self.d_frame[1])
 
 class WFReport:
     """ Object made to aid in reading in reports from American Express cards
@@ -157,10 +166,10 @@ class WFReport:
     recommend placing it in the "./database" directory TODO: adjust location for raw files later
     """
     def __init__(self, path: str = "") -> None:
-        # # Initial Logger Settings
-        # fmt_main = "%(asctime)s\t| %(levelname)s\t| %(message)s"
-        # logging.basicConfig(format=fmt_main, level=logging.INFO,
-        #             datefmt="%Y-%m-%d %H:%M:%S")
+        # Initial Logger Settings
+        fmt_main = "%(asctime)s\t| %(levelname)s\t| %(message)s"
+        logging.basicConfig(format=fmt_main, level=logging.INFO,
+                    datefmt="%Y-%m-%d %H:%M:%S")
 
         # Validate Path
         if path == "" or not os.path.exists(path):
@@ -172,7 +181,7 @@ class WFReport:
                 initialdir=f"{RTDIR}\\database\\")
 
             if path == "":
-                print("Error: path blank")
+                logging.error("Path blank. Exiting...")
                 sys.exit(1)
 
         # Read in the data

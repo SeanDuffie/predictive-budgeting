@@ -22,12 +22,13 @@ TODO: Make this more permanent with a port forward and noip.com?
 # TODO
 
 1. Budget
-    - [ ] Automatically read in CSV
+    - [x] Automatically read in CSV
     - [ ] Compare new CSV to existing database, compile non duplicates into a cumulative database.
     - [ ] Categorize expenses and incomes
     - [ ] Launch into a Flask Server for graphs and interactive data
-        - [ ] Pie Chart for how much in each category for both expenses and 
+        - [x] Pie Chart for how much in each category for both expenses and 
 2. Stocks
+    - [x] Use yfinance API to access stock data
     - [ ] Milestones to indicate potential causes of pattern changes
 3. Loans
     - [ ] Amortization chart?
