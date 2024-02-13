@@ -13,14 +13,6 @@ Amounts:
 
 import math
 
-bill = float(input("Enter the recurring amount: "))
-months = float(input("How many months between payments? (3 would be quarterly): "))
-interest = float(input("What interest will apply? (can be 0): "))
-
-# one = math.pow(bill*(1+interest), 1)
-# five = math.pow(bill*(1+interest), 5)
-# ten = math.pow(bill*(1+interest), 10)
-
 def repeating_investment(amnt: float, perc: float, time: int, interval: float = 1):
     """_summary_
 
@@ -35,7 +27,7 @@ def repeating_investment(amnt: float, perc: float, time: int, interval: float = 
         float: amount with recent deposits and interest, used recursively
     """
     per_year = 12/interval
-    ir_factor = interest/12
+    ir_factor = perc/12
     new_amnt = 0
 
     if time > 1:
@@ -52,10 +44,49 @@ def repeating_investment(amnt: float, perc: float, time: int, interval: float = 
     # print(f"Year {time}: ${new_amnt}")
     return new_amnt
 
-# print(f"You would save ${one} over 1 year")
-# print(f"You would save ${five} over 5 years")
-# print(f"You would save ${ten} over 10 years")
+def home_appreciation(mortgage: float, time: int, rate: float = 0.05) -> float:
+    """
+    
+    
+        Factors:
+        - Initial Home Value
+        - Equity
+        - Interest Paid
+        - Appreciation accrued
+    """
+    return mortgage*math.pow(1+rate, time)
 
-print(f"You would save ${repeating_investment(bill, interest, 1, months)} over 1 year ({int(interest*100)}% interest)")
-print(f"You would save ${repeating_investment(bill, interest, 5, months)} over 5 years ({int(interest*100)}% interest)")
-print(f"You would save ${repeating_investment(bill, interest, 10, months)} over 10 years ({int(interest*100)}% interest)")
+if __name__ == "__main__":
+    # I need more skills for this, make more progress on agri-scripts first before I return to this issue
+    timespan = 120 # months
+
+    savings = 2500
+    invest = 1000
+    mortgage = 3000
+
+    savings_total = repeating_investment(savings, 0.043, timespan/12, 1)
+    print(f"Saved = {savings_total}")
+    invest_total = repeating_investment(savings, 0.06, timespan/12, 1)
+    print(f"Invested = {invest_total}")
+
+    education = 10000
+    home_init = 350000
+    home_app = home_appreciation(home_init, timespan/12, 0.05)
+    print(f"Home Value = {home_app}")
+    
+    gross = savings_total + invest_total + home_app
+    print(f"\nGross Worth after {timespan} months: {gross}")
+
+    debt = education + home_init
+    print(f"Debt after {timespan} months: {debt}")
+
+    net = gross - debt
+    print(f"Net Worth after {timespan} months: {net}")
+
+    # bill = float(input("Enter the recurring amount: "))
+    # months = float(input("How many months between payments? (3 would be quarterly): "))
+    # interest = float(input("What interest will apply? (can be 0): "))
+
+    # print(f"You would save ${repeating_investment(bill, interest, 1, months)} over 1 year ({int(interest*100)}% interest)")
+    # print(f"You would save ${repeating_investment(bill, interest, 5, months)} over 5 years ({int(interest*100)}% interest)")
+    # print(f"You would save ${repeating_investment(bill, interest, 10, months)} over 10 years ({int(interest*100)}% interest)")
