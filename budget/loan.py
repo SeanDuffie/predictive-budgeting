@@ -6,7 +6,7 @@ class Loan():
         self.loan_amount = amount
         self.principal = amount
         self.apr = apr
-        
+
         self.interest_table = []
         self.principal_table = []
         self.total_interest = 0

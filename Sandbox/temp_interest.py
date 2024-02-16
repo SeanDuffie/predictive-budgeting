@@ -13,6 +13,7 @@ Amounts:
 
 import math
 
+
 def repeating_investment(amnt: float, perc: float, time: int, interval: float = 1):
     """_summary_
 
