@@ -1,28 +1,46 @@
-"""_summary_
+""" @file loan.py
+    @author Sean Duffie
+    @brief This Loan object is intended to help me organize loan-related features of my budget
+
     References:
     - https://www.bankrate.com/mortgages/amortization-calculator/
 """
 import pandas as pd
 
+
 class Loan():
+    """ The Loan object allows me to store data related to loans without having to retype
+        it every time I want to try to experiment with new parameters
+    """
     def __init__(self, amount: float, apr: float, term: int, name: str = "Loan"):
+        """ Populate the inital parameters of the loan
+        Args:
+            amount (float): Total starting value for the loan
+            apr (float): annual percentage rate
+            term (int): maximum number of months for this loan to be paid off
+            name (str, optional): User Friendly name for this loan. Defaults to "Loan".
+        """
         self.name = name
         self.loan_amount = amount
         self.principal = amount
-        self.apr = apr
         self.mpr = apr / 12
 
         self.term = term
         self.min_payment = (self.loan_amount * self.mpr) / (1 - (1 + self.mpr) ** -self.term)
-        print(f"{self.min_payment=}")
 
-        self.interest_table = []
-        self.principal_table = []
-        self.total_interest = 0
+    def amor_table(self, monthly_payment: float = None):
+        """ Generates an amortization chart for the loan, can take multiple values of monthly payments.
 
+        TODO: Associate Datetime with first bill and generate an actual schedule
 
-    def amor_table(self, monthly_payment = None):
+        Args:
+            monthly_payment (float, optional): the monthly payment towards the loan. Defaults to minimum payment.
+
+        Returns:
+            pd.Dataframe: dataframe of each monthly payment over the term of the loan
+        """
         if monthly_payment is None:
+            print(f"Using minimum payment of ${self.min_payment}")
             monthly_payment = self.min_payment
 
         payments = [[self.principal, 0, 0, 0]]
@@ -30,7 +48,8 @@ class Loan():
         prin = self.principal
         term_left = self.term
 
-        while prin > 0 and term_left > 0:
+        # Loop through the payment term
+        while prin > monthly_payment and term_left > 0:
             payment = self.make_payment(prin, monthly_payment)
 
             prin = payment[0]
@@ -40,16 +59,30 @@ class Loan():
             payment.append(total_interest)
             payments.append(payment)
 
+        # Convert list of payments to dataframe
         amortization_table = pd.DataFrame(data=payments,
                                         columns=['Principal Remaining',
                                                 'Current Principal Payment',
                                                 'Current Interest Payment',
                                                 'Total Interest Paid'])
-        print(amortization_table)
 
-    def make_payment(self, principal, monthly_payment):
-        # Calculate the amount of interest generated this month, then the amount applied to they 
+        return amortization_table
+
+    def make_payment(self, principal: float, monthly_payment: float):
+        """ Helper function for amor_table()
+
+        Calculates the new principal after making a monthly payment, then
+
+        Args:
+            principal (float): original principal
+            monthly_payment (float): monthly bill going towards loan (towards both principal and interest)
+
+        Returns:
+            tuple: a tuple containing the new principal, the amount applied to principal, and the amount to interest
+        """
+        # Calculate the amount of interest generated this month
         current_interest_payment = principal * self.mpr
+        # Calculate the amount of montly payment that goes towards the principal
         current_principal_payment = monthly_payment - current_interest_payment
 
         principal -= current_principal_payment
