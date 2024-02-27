@@ -61,13 +61,13 @@ if __name__ == "__main__":
     # I need more skills for this, make more progress on agri-scripts first before I return to this issue
     timespan = 120 # months
 
-    savings = 2500
+    savings = 1500
     invest = 1000
     mortgage = 3000
 
     savings_total = repeating_investment(savings, 0.043, timespan/12, 1)
     print(f"Saved = {savings_total}")
-    invest_total = repeating_investment(savings, 0.06, timespan/12, 1)
+    invest_total = repeating_investment(invest, 0.06, timespan/12, 1)
     print(f"Invested = {invest_total}")
 
     education = 10000
