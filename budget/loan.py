@@ -28,7 +28,7 @@ class Loan():
         self.term = term
         self.min_payment = (self.loan_amount * self.mpr) / (1 - (1 + self.mpr) ** -self.term)
 
-    def amor_table(self, monthly_payment: float = None):
+    def amor_table(self, monthly_payment: float = None, amended_term: int = None):
         """ Generates an amortization chart for the loan, can take multiple values of monthly payments.
 
         TODO: Associate Datetime with first bill and generate an actual schedule
@@ -40,13 +40,18 @@ class Loan():
             pd.Dataframe: dataframe of each monthly payment over the term of the loan
         """
         if monthly_payment is None:
-            print(f"Using minimum payment of ${self.min_payment}")
-            monthly_payment = self.min_payment
+            if amended_term is None:
+                term_left = self.term
+                monthly_payment = self.min_payment
+                print(f"Using minimum payment of ${monthly_payment}")
+            else:
+                term_left = amended_term
+                monthly_payment = (self.loan_amount * self.mpr) / (1 - (1 + self.mpr) ** -amended_term)
+                print(f"Using amended payment of ${monthly_payment}")
 
         payments = [[self.principal, 0, 0, 0]]
         total_interest = 0
         prin = self.principal
-        term_left = self.term
 
         # Loop through the payment term
         while prin > monthly_payment and term_left > 0:
@@ -92,8 +97,9 @@ class Loan():
 
 if __name__ == "__main__":
     print("Student Loans:")
-    # mohela1 = Loan(4500, .035, 120)
-    # mohela2 = Loan(5500, .025, 120)
+    mohela1 = Loan(4500, .035, 120)
+    mohela2 = Loan(5500, .025, 120)
+    print(mohela1.amor_table(amended_term=10))
     # print(mohela1.amor_table(750))
     # print(mohela2.amor_table(750))
     # mohela.amor_table(1000)
