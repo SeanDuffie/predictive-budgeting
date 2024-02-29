@@ -4,49 +4,43 @@ import abc
 import datetime
 
 
-class Transaction(abc.ABC):
+class Transaction():
     """ TODO:
     """
-    category = 0
-    income = False
+    # Category of the transaction
+    master_cat = ""
+    sub_cat = ""
+    
+    # Duration in months of a recurring payment. 0 is not recurring. -1 is indefinite.
+    duration = 0
+    # Amount of months in between payments. 1 is monthly, 3 is quarterly, 12 is yearly.
+    interval = 0
 
-    def __init__(self, row: tuple):
-        self.date = datetime.datetime.strptime(row[1], "%m/%d/%Y")
-        self.amount = row[2]
-        self.name = row[5]
+    # Optional additional data
+    vendor = ""
+    location = ""
+    description = ""
 
-    # def __init__(self, name: str, amnt: float, frq: int, cat: str):
-    #     self.name = name
-    #     self.amount = amnt
-    #     self.frequency = frq
-    #     self.category = cat
+    def __init__(self, date, amount, name):
+        self.date = datetime.datetime.strptime(date, "%m/%d/%Y")
+        self.amount = amount
+        self.name = name
 
-    #     self.cost_per_day = self.amount / self.frequency
+    def assign_category(self, master, sub):
+        self.master_cat = master
+        self.sub_cat = sub
 
-    # def monthly(self):
-    #     """ amount per month
-    #     """
-    #     return self.cost_per_day * 30
+    def recurring(self, interval, duration = -1):
+        self.interval = interval
+        self.duration = duration
 
-    # def biweekly(self):
-    #     """ amount per paycheck
-    #     """
-    #     return self.cost_per_day * 14
+    def add_details(self, desc = "", vendor = "", loc = ""):
+        self.description = desc
+        self.vendor = vendor
+        self.location = loc
+
+    # def to_dataframe(self):
+    #     return f"{}"
 
     def __str__(self):
         return f"{self.date.date()}\t{self.amount} -> {self.name}"
-
-
-
-# class Expense(Transaction):
-#     """ TODO:
-#     """
-
-# class Income(Transaction):
-#     """ Objectifies Income sources
-
-#         This should 
-#     """
-
-#     def biweekly(self):
-#         return super().biweekly()

@@ -152,7 +152,96 @@ class AmexReport:
         # Read in the data
         self.d_frame = pandas.read_csv(path)
 
-        print(self.d_frame.head())
+        self.categorize()
+        
+    def categorize(self) -> list[Transaction]:
+        new_entries = []
+        
+        cats = pandas.read_json("./database/wf_sorting.json")
+        print(f"{cats=}")
+        
+        #TODO: Maybe have a separate lambda function for both major categories and subcategories?
+        mcats = ["Housing", "Transportation", "Food", "Utilities", "Medical", "Insurance", "Net Worth", "Subscriptions", "Misc"]
+        
+        print(f"{cats['Transportation'].str.split().str[-1]=}")
+        
+        pat =  '('+'|'.join(cats.str.split().str[-1])+')'
+        "()"
+        self.d_frame['NCat'] = ('contains ' + self.d_frame['Description'].str.extract(pat)).fillna('other')
+        print(self.d_frame["NCat"])
+
+        # for (_, master, subcat, date, location, vendor, desc, method, amnt) in self.d_frame.iterrows():
+        #     tran = Transaction(date, amnt, desc)
+        #     tran.add_details(desc=desc, vendor=vendor, loc=location)
+
+        #     # TODO: Instead of measuring based on only master and sub from WF, add description to a list of 
+        #     if master == "Auto/Transportation":
+        #         if subcat == "Gasoline":
+        #             tran.assign_category("Transportation", "Gas")
+        #         if subcat == "Maintenance/Repair":
+        #             tran.assign_category("Transportation", "Maintenance")
+        #         if subcat == "Parking/Tolls":
+        #             tran.assign_category("Transportation", "Parking/Tolls")
+        #         else:
+        #             logging.warning("Unrecognized Subcategory. Enter Manually:")
+        #             logging.warning("Master: %s |\tSub: %s |\tDescription: %s", master, subcat, desc)
+        #             new_master = str(input("Enter manual Master Category: "))
+        #             new_sub = str(input("Enter manual Subcategory: "))
+        #             tran.assign_category(new_master, new_sub)
+
+        #     if master == "Bills/Utilities":
+        #         # TODO: Objectify this for more information
+        #         if subcat == "Gas/Electric":
+        #             tran.assign_category("Utilities", "Electricity")
+        #         if subcat == "Phone/Internet":
+        #             tran.assign_category("Utilities", "Internet")
+        #         if subcat == "Cable/Satellite TV":
+        #             tran.assign_category("Utilities", "Internet")
+        #         else:
+        #             logging.warning("Unrecognized Subcategory. Enter Manually:")
+        #             logging.warning("Master: %s |\tSub: %s |\tDescription: %s", master, subcat, desc)
+        #             new_master = str(input("Enter manual Master Category: "))
+        #             new_sub = str(input("Enter manual Subcategory: "))
+        #             tran.assign_category(new_master, new_sub)
+
+        #     if master == "Business/Office":
+        #         if subcat == "Postage/Shipping":
+        #             tran.assign_category("Misc", "Postage")
+        #         if subcat == "Maintenance/Repair":
+        #             tran.assign_category("Transportation", "Maintenance")
+        #         if subcat == "Parking/Tolls":
+        #             tran.assign_category("Transportation", "Parking/Tolls")
+        #         else:
+        #             logging.warning("Unrecognized Subcategory. Enter Manually:")
+        #             logging.warning("Master: %s |\tSub: %s |\tDescription: %s", master, subcat, desc)
+        #             new_master = str(input("Enter manual Master Category: "))
+        #             new_sub = str(input("Enter manual Subcategory: "))
+        #             tran.assign_category(new_master, new_sub)
+                    
+                    
+        #     if master == "Auto/Transportation":
+        #         if subcat == "Gasoline":
+        #             tran.assign_category("Transportation", "Gas")
+        #         if subcat == "Maintenance/Repair":
+        #             tran.assign_category("Transportation", "Maintenance")
+        #         if subcat == "Parking/Tolls":
+        #             tran.assign_category("Transportation", "Parking/Tolls")
+        #         else:
+        #             logging.warning("Unrecognized Subcategory. Enter Manually:")
+        #             logging.warning("Master: %s |\tSub: %s |\tDescription: %s", master, subcat, desc)
+        #             new_master = str(input("Enter manual Master Category: "))
+        #             new_sub = str(input("Enter manual Subcategory: "))
+        #             tran.assign_category(new_master, new_sub)
+        #     else:
+        #         logging.warning("Unrecognized Master Category. Enter Manually:")
+        #         logging.warning("Master: %s |\tSub: %s |\tDescription: %s", master, subcat, desc)
+        #         new_master = str(input("Enter manual Master Category: "))
+        #         new_sub = str(input("Enter manual Subcategory: "))
+        #         tran.assign_category(new_master, new_sub)
+
+        #     new_entries.append(tran)
+
+        return new_entries
 
 class WFReport:
     """ Object made to aid in reading in reports from American Express cards
@@ -255,14 +344,30 @@ class Address:
         return fmt
 
 if __name__ == "__main__":
-    # first = Transaction("rent", 633.34, 1, "rent")
-    # print(first)
-    db = Database()
-    # db = Database(path="./database/All_Payment_Methods100623.csv")
-    # db.sub_cats()
-    db.sum_cats()
-    # db.showDF()
-    # wf = WFReport()
-    # wf.num_major_cats()
-    # wf.num_sub_cats()
-    # AmexReport()
+    # db = Database()
+    # db.sum_cats()
+    # df = db.getDF()
+
+    am = AmexReport("./database/reports/AmEx_activity_2.csv")
+
+    # categories = pandas.DataFrame({"category": ["wire", "energy", "loans", "advisors"]})
+    # domains = pandas.DataFrame({"Sno": list(range(1, 10)),
+    #                 "Domain_IDs": [
+    #                     "herowire.com",
+    #                     "xyzenergy.com",
+    #                     "financial.com",
+    #                     "oo-loans.com",
+    #                     "okwire.com",
+    #                     "cleanenergy.com",
+    #                     "pop-advisors.com",
+    #                     "energy-advisors.com",
+    #                     "wire-loans.com"]})
+
+    # categories["common"] = 0
+    # domains["common"] = 0
+
+    # possibilities = pandas.merge(categories, domains, how="outer")
+    # possibilities["satisfied"] = possibilities.apply(lambda row: row["category"] in row["Domain_IDs"], axis=1)
+    
+    
+    
