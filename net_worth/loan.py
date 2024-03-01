@@ -93,12 +93,14 @@ class Loan():
 
 if __name__ == "__main__":
     print("Student Loans:")
-    mohela = Loan(10000, .033, 120)
-    mohela.amor_table()
-    mohela.amor_table(500)
-    mohela.amor_table(1000)
+    # mohela1 = Loan(4500, .035, 120)
+    # mohela2 = Loan(5500, .025, 120)
+    # print(mohela1.amor_table(750))
+    # print(mohela2.amor_table(750))
+    # mohela.amor_table(1000)
 
-    mort = Loan(300000, .06, 180)
-    mort.amor_table()
-    mort.amor_table(2500)
-    mort.amor_table(3500)
+    print("Mortgage:")
+    mort = Loan(250000, .06, 180)
+    print(mort.amor_table())
+    print(mort.amor_table(2500))
+    print(mort.amor_table(3500))
