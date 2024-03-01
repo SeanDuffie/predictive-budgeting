@@ -61,33 +61,33 @@ if __name__ == "__main__":
     # I need more skills for this, make more progress on agri-scripts first before I return to this issue
     timespan = 120 # months
 
-    savings = 1500
-    invest = 1000
-    mortgage = 3000
+    # savings = 1500
+    # invest = 1000
+    # mortgage = 3000
 
-    savings_total = repeating_investment(savings, 0.043, timespan/12, 1)
-    print(f"Saved = {savings_total}")
-    invest_total = repeating_investment(invest, 0.06, timespan/12, 1)
-    print(f"Invested = {invest_total}")
+    # savings_total = repeating_investment(savings, 0.043, timespan/12, 1)
+    # print(f"Saved = {savings_total}")
+    # invest_total = repeating_investment(invest, 0.06, timespan/12, 1)
+    # print(f"Invested = {invest_total}")
 
-    education = 10000
-    home_init = 350000
-    home_app = home_appreciation(home_init, timespan/12, 0.05)
-    print(f"Home Value = {home_app}")
+    # education = 10000
+    # home_init = 350000
+    # home_app = home_appreciation(home_init, timespan/12, 0.05)
+    # print(f"Home Value = {home_app}")
     
-    gross = savings_total + invest_total + home_app
-    print(f"\nGross Worth after {timespan} months: {gross}")
+    # gross = savings_total + invest_total + home_app
+    # print(f"\nGross Worth after {timespan} months: {gross}")
 
-    debt = education + home_init
-    print(f"Debt after {timespan} months: {debt}")
+    # debt = education + home_init
+    # print(f"Debt after {timespan} months: {debt}")
 
-    net = gross - debt
-    print(f"Net Worth after {timespan} months: {net}")
+    # net = gross - debt
+    # print(f"Net Worth after {timespan} months: {net}")
 
-    # bill = float(input("Enter the recurring amount: "))
-    # months = float(input("How many months between payments? (3 would be quarterly): "))
-    # interest = float(input("What interest will apply? (can be 0): "))
+    bill = float(input("Enter the recurring amount: "))
+    months = float(input("How many months between payments? (3 would be quarterly): "))
+    interest = float(input("What interest will apply? (can be 0): "))
 
-    # print(f"You would save ${repeating_investment(bill, interest, 1, months)} over 1 year ({int(interest*100)}% interest)")
-    # print(f"You would save ${repeating_investment(bill, interest, 5, months)} over 5 years ({int(interest*100)}% interest)")
+    print(f"You would save ${repeating_investment(bill, interest, 1, months)} over 1 year ({int(interest*100)}% interest)")
+    print(f"You would save ${repeating_investment(bill, interest, 5, months)} over 5 years ({int(interest*100)}% interest)")
     # print(f"You would save ${repeating_investment(bill, interest, 10, months)} over 10 years ({int(interest*100)}% interest)")

@@ -6,6 +6,7 @@
     - https://www.bankrate.com/mortgages/amortization-calculator/
 """
 import pandas as pd
+import datetime
 
 
 class Loan():
@@ -28,7 +29,7 @@ class Loan():
         self.term = term
         self.min_payment = (self.loan_amount * self.mpr) / (1 - (1 + self.mpr) ** -self.term)
 
-    def amor_table(self, monthly_payment: float = None):
+    def amor_table(self, monthly_payment: float = None, start_date: datetime.datetime = None):
         """ Generates an amortization chart for the loan, can take multiple values of monthly payments.
 
         TODO: Associate Datetime with first bill and generate an actual schedule
