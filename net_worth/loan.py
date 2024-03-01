@@ -6,6 +6,7 @@
     - https://www.bankrate.com/mortgages/amortization-calculator/
 """
 import pandas as pd
+import datetime
 
 
 class Loan():
