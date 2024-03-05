@@ -286,33 +286,12 @@ class Database():
         self.con.close()
 
 
-def clean_old_set():
-    """ This function was used to convert the old dataset to the new Database format.
-        Shouldn't be needed anymore but is kept for reference.
-    """
-    def timeform(ts: str):
-        return datetime.datetime.strptime(ts, "%Y-%m-%d_%Hh")
-
-    dat = pd.read_csv(filepath_or_buffer="./data/palm1/dat.csv")
-    # print(dat)
-    dat = dat.drop("Month", axis=1)
-    dat = dat.drop("Day", axis=1)
-    dat = dat.drop("Hour", axis=1)
-    dat = dat.drop("Amount Watered", axis=1)
-    dat = dat.drop("Watered?", axis=1)
-    dat = dat.drop("Days without water", axis=1)
-
-    # print(dat)
-    dat["Date"] = dat["Date"].apply(timeform, 1)
-    print(dat)
-
 if __name__ == "__main__":
     # Initialize Database
     db = Database(db_name="test.db")
 
     # Drop existing table for testing purposes
     db.list_tables()
-    db.drop_table("AeroGarden")
 
     # Read data from old csv and populate table all at once
     df1 = pd.read_csv(filepath_or_buffer="./dat_aerogarden.csv")

@@ -2,7 +2,6 @@
     @author Sean Duffie
     @brief Base class of transaction, this will be inherited by others
 """
-# from datetime 
 import datetime
 
 
