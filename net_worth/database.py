@@ -48,24 +48,20 @@ class Database():
         # Generate the connection to the database file, if there is no file then create a new one
         self.db_name = db_name
         self.db_path = db_path
-        self.create_connection(db_file=db_name, db_path=db_path)
+        self.create_connection()
         if self.con is None or self.cursor is None:
             logging.error("Failed to make connection!")
 
 
-    def create_connection(self, db_file: str = "my_database.db", db_path: str = "./") -> sqlite3.Connection:
+    def create_connection(self) -> sqlite3.Connection:
         """ Creates the connection with the sqlite database file
-
-        Args:
-            db_file (str, optional): the name of the file that will contain the database.
-                                        Defaults to "my_database.db".
 
         Returns:
             sqlite3.Connection: The sqlite object that interacts with the database
         """
         try:
             # Create a connection to the SQL database file
-            self.con = sqlite3.connect(f"{db_path}{db_file}")
+            self.con = sqlite3.connect(f"{self.db_path}{self.db_name}")
             # Create a cursor
             self.cursor = self.con.cursor()
         except sqlite3.Error as e:
@@ -293,38 +289,18 @@ if __name__ == "__main__":
     # Drop existing table for testing purposes
     db.list_tables()
 
-    # Read data from old csv and populate table all at once
-    df1 = pd.read_csv(filepath_or_buffer="./dat_aerogarden.csv")
-    start = datetime.datetime.now()
-    db.df_to_table(df=df1, t_name="AeroGarden")
-    stop = datetime.datetime.now()
-    # print(db.get_df("AeroGarden"))
-    elapsed = stop-start
-    count = df1.shape[0]
-    print(f"Inserted {count} rows in {elapsed} seconds ({elapsed/count} per row)")
-
     # Drop existing table for testing purposes
-    db.drop_table("palm")
+    db.drop_table("Loans")
 
     # Read data from old csv and populate table one row at a time (significantly slower)
-    table = [
+    loan_table = [
         ("Date", "text", ""),
-        ("Soil Moisture", "text", ""),
+        ("Balance", "text", ""),
         ("Light Intensity", "text", ""),
         ("Temperature", "text", ""),
         ("Humidity", "text", "")
     ]
-    db.create_table("palm", table)
-    df2 = pd.read_csv(filepath_or_buffer="./dat_palm.csv")
-    # keys = f"{df2.keys().to_list()}".replace("[","(").replace("]",")").replace("'","")
-    start = datetime.datetime.now()
-    for pd_row in df2.itertuples(index=True, name=None):
-        print(type(pd_row))
-        db.insert_row(t_name="palm", row=pd_row)
-    stop = datetime.datetime.now()
-    # print(db.get_df("palm"))
+    db.create_table("Loans", loan_table)
+    # db.insert_row(t_name="palm", row=pd_row)
 
-    elapsed = stop-start
-    count = df2.shape[0]
-    print(f"Inserted {count} rows in {elapsed} seconds ({elapsed/count} per row)")
     db.list_tables()
