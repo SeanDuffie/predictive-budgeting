@@ -35,6 +35,8 @@ class Loan():
         self.term = term
         self.schedule = rrule(freq=MONTHLY, count=term, dtstart=start)
         self.min_payment = (self.loan_amount * self.mpr) / (1 - (1 + self.mpr) ** -self.term)
+        self.plan = self.amor_table()
+        print(self.plan)
 
     def amor_table(self, monthly_payment: float = None, amended_term: int = None):
         """ Generates an amortization chart for the loan, can take multiple values of monthly payments.
@@ -47,15 +49,22 @@ class Loan():
         Returns:
             pd.Dataframe: dataframe of each monthly payment over the term of the loan
         """
+        assert monthly_payment is None or amended_term is None
+
+        # Handle non-default monthly payment
         if monthly_payment is None:
-            if amended_term is None:
-                term_left = self.term
-                monthly_payment = self.min_payment
-                print(f"Using minimum payment of ${monthly_payment}")
-            else:
-                term_left = amended_term
-                monthly_payment = (self.loan_amount * self.mpr) / (1 - (1 + self.mpr) ** -amended_term)
-                print(f"Using amended payment of ${monthly_payment}")
+            monthly_payment = self.min_payment
+            print(f"Using minimum payment of ${monthly_payment}")
+        else:
+            print(f"Using manual payment of ${monthly_payment}")
+
+        # Handle non-default term length
+        if amended_term is None:
+            term_left = self.term
+        else:
+            term_left = amended_term
+            monthly_payment = (self.loan_amount * self.mpr) / (1 - (1 + self.mpr) ** - amended_term)
+            print(f"Using amended term of {term_left} months with a minimum payment of ${monthly_payment}")
 
         headers = ["Date", "Balance Remaining", "Applied to Principal", "Applied to Interest", "Total Interest"]
         payments = [[self.schedule[0], self.principal, 0, 0, 0]]
@@ -104,12 +113,10 @@ if __name__ == "__main__":
     # print(mohela1.amor_table(amended_term=10))
     # print(mohela1.amor_table(750))
     # print(mohela2.amor_table(750))
-    print(mohela1.amor_table())
-    print(mohela2.amor_table())
     # mohela.amor_table(1000)
 
     # print("Mortgage:")
-    # mort = Loan(amount=250000, apr=.06, term=180)
+    mort = Loan(amount=250000, apr=.05, term=120)
     # print(mort.amor_table())
     # print(mort.amor_table(2500))
-    # print(mort.amor_table(3500))
+    print(mort.amor_table(monthly_payment=3000))
