@@ -8,7 +8,7 @@ import json
 import plotly.express as px
 from dash import Dash, Input, Output, dcc, html
 
-from database import Database
+from process_reports import Database
 
 # df1 = px.data.stocks()
 # fig1 = px.line(

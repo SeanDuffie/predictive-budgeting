@@ -18,7 +18,7 @@ class Stock:
         self.stock = yf.Ticker(self.title)
         self.df = self.stock.history
 
-        self.SMA()
+        # self.SMA("Close", 100)
 
     def SMA(self, feature: str, window_size: int) -> pd.DataFrame:
         """ Simple Moving Average

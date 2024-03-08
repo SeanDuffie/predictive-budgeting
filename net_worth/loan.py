@@ -5,15 +5,17 @@
     References:
     - https://www.bankrate.com/mortgages/amortization-calculator/
 """
-import pandas as pd
 import datetime
+
+import pandas as pd
+from dateutil.rrule import MONTHLY, rrule
 
 
 class Loan():
     """ The Loan object allows me to store data related to loans without having to retype
         it every time I want to try to experiment with new parameters
     """
-    def __init__(self, amount: float, apr: float, term: int, name: str = "Loan"):
+    def __init__(self, amount: float, apr: float, start: datetime.date = None, term: int = 120, name: str = "Loan"):
         """ Populate the inital parameters of the loan
         Args:
             amount (float): Total starting value for the loan
@@ -26,8 +28,15 @@ class Loan():
         self.principal = amount
         self.mpr = apr / 12
 
+        if start is None:
+            self.start_date = datetime.date.today()
+        else:
+            self.start_date = start
         self.term = term
+        self.schedule = rrule(freq=MONTHLY, count=term, dtstart=start)
         self.min_payment = (self.loan_amount * self.mpr) / (1 - (1 + self.mpr) ** -self.term)
+        self.plan = self.amor_table()
+        print(self.plan)
 
     def amor_table(self, monthly_payment: float = None, amended_term: int = None):
         """ Generates an amortization chart for the loan, can take multiple values of monthly payments.
@@ -40,37 +49,38 @@ class Loan():
         Returns:
             pd.Dataframe: dataframe of each monthly payment over the term of the loan
         """
-        if monthly_payment is None:
-            if amended_term is None:
-                term_left = self.term
-                monthly_payment = self.min_payment
-                print(f"Using minimum payment of ${monthly_payment}")
-            else:
-                term_left = amended_term
-                monthly_payment = (self.loan_amount * self.mpr) / (1 - (1 + self.mpr) ** -amended_term)
-                print(f"Using amended payment of ${monthly_payment}")
+        assert monthly_payment is None or amended_term is None
 
-        payments = [[self.principal, 0, 0, 0]]
+        # Handle non-default monthly payment
+        if monthly_payment is None:
+            monthly_payment = self.min_payment
+            print(f"Using minimum payment of ${monthly_payment}")
+        else:
+            print(f"Using manual payment of ${monthly_payment}")
+
+        # Handle non-default term length
+        if amended_term is None:
+            term_left = self.term
+        else:
+            term_left = amended_term
+            monthly_payment = (self.loan_amount * self.mpr) / (1 - (1 + self.mpr) ** - amended_term)
+            print(f"Using amended term of {term_left} months with a minimum payment of ${monthly_payment}")
+
+        headers = ["Date", "Balance Remaining", "Applied to Principal", "Applied to Interest", "Total Interest"]
+        payments = [[self.schedule[0], self.principal, 0, 0, 0]]
         total_interest = 0
-        prin = self.principal
+        balance = self.principal
 
         # Loop through the payment term
-        while prin > monthly_payment and term_left > 0:
-            payment = self.make_payment(prin, monthly_payment)
+        while balance > monthly_payment and term_left > 0:
+            balance, app_principal, app_interest = self.make_payment(balance, monthly_payment)
+            total_interest += app_interest
 
-            prin = payment[0]
+            payments.append([self.schedule[self.term-term_left+1], balance, app_principal, app_interest, total_interest])
             term_left -= 1
-            total_interest += payment[2]
-
-            payment.append(total_interest)
-            payments.append(payment)
 
         # Convert list of payments to dataframe
-        amortization_table = pd.DataFrame(data=payments,
-                                        columns=['Principal Remaining',
-                                                'Current Principal Payment',
-                                                'Current Interest Payment',
-                                                'Total Interest Paid'])
+        amortization_table = pd.DataFrame(data=payments, columns=headers)
 
         return amortization_table
 
@@ -98,15 +108,15 @@ class Loan():
 
 if __name__ == "__main__":
     print("Student Loans:")
-    mohela1 = Loan(4500, .035, 120)
-    mohela2 = Loan(5500, .025, 120)
-    print(mohela1.amor_table(amended_term=10))
+    mohela1 = Loan(amount=4500, apr=.035, term=120)
+    mohela2 = Loan(amount=5500, apr=.025, term=120)
+    # print(mohela1.amor_table(amended_term=10))
     # print(mohela1.amor_table(750))
     # print(mohela2.amor_table(750))
     # mohela.amor_table(1000)
 
-    print("Mortgage:")
-    mort = Loan(250000, .06, 180)
-    print(mort.amor_table())
-    print(mort.amor_table(2500))
-    print(mort.amor_table(3500))
+    # print("Mortgage:")
+    mort = Loan(amount=250000, apr=.05, term=120)
+    # print(mort.amor_table())
+    # print(mort.amor_table(2500))
+    print(mort.amor_table(monthly_payment=3000))
