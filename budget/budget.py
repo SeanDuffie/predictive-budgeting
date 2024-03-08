@@ -31,7 +31,7 @@ class Budget():
         - Local: 
 
         Returns:
-            _type_: _description_
+            float: amount of taxes to deduct from gross
             
         """
         return 0
