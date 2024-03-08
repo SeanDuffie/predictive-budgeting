@@ -61,7 +61,7 @@ if __name__ == "__main__":
     # I need more skills for this, make more progress on agri-scripts first before I return to this issue
     timespan = 120 # months
 
-    savings = 2000
+    savings = 2500
     invest = 1000
     mortgage = 3000
 
@@ -93,12 +93,15 @@ if __name__ == "__main__":
     print()
     print(f"You would save ${repeating_investment(savings, sav_interest, 1, 1)} over 1 year ({int(sav_interest*100)}% interest)")
     print(f"You would save ${repeating_investment(savings, sav_interest, 2, 1)} over 2 years ({int(sav_interest*100)}% interest)")
-    print(f"You would save ${repeating_investment(savings, sav_interest, 10, 1)} over 3 years ({int(sav_interest*100)}% interest)")
+    print(f"You would save ${repeating_investment(savings, sav_interest, 3, 1)} over 3 years ({int(sav_interest*100)}% interest)")
+    print(f"You would save ${repeating_investment(savings, sav_interest, 10, 1)} over 10 years ({int(sav_interest*100)}% interest)")
     print()
     print(f"You would invest ${repeating_investment(invest, inv_interest, 1, 1)} over 1 year ({int(inv_interest*100)}% interest)")
     print(f"You would invest ${repeating_investment(invest, inv_interest, 2, 1)} over 2 years ({int(inv_interest*100)}% interest)")
-    print(f"You would invest ${repeating_investment(invest, inv_interest, 10, 1)} over 3 years ({int(inv_interest*100)}% interest)")
+    print(f"You would invest ${repeating_investment(invest, inv_interest, 3, 1)} over 3 years ({int(inv_interest*100)}% interest)")
+    print(f"You would invest ${repeating_investment(invest, inv_interest, 10, 1)} over 10 years ({int(inv_interest*100)}% interest)")
     print()
     print(f"After student loans are paid off, you will have an additional ${repeating_investment(2250, sav_interest, 1, 1)} on year 2")
-    print(f"After student loans are paid off, you will have an additional ${repeating_investment(2250, sav_interest, 9, 1)} on year 3")
+    print(f"After student loans are paid off, you will have an additional ${repeating_investment(2250, sav_interest, 2, 1)} on year 3")
+    print(f"After student loans are paid off, you will have an additional ${repeating_investment(2250, sav_interest, 9, 1)} on year 10")
     # print(f"You would save ${repeating_investment(bill, interest, 10, months)} over 10 years ({int(interest*100)}% interest)")
