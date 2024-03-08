@@ -11,6 +11,15 @@ import pandas as pd
 from dateutil.rrule import MONTHLY, rrule
 
 
+def calculate_term(start: datetime.datetime, end: datetime.datetime) -> int:
+    ydif = end.year - start.year
+    mdif = end.month - start.month
+
+    dif = ydif * 12 + mdif
+    print(dif)
+
+    return dif
+
 class Loan():
     """ The Loan object allows me to store data related to loans without having to retype
         it every time I want to try to experiment with new parameters
@@ -32,8 +41,13 @@ class Loan():
             self.start_date = datetime.date.today()
         else:
             self.start_date = start
-        self.term = term
-        self.schedule = rrule(freq=MONTHLY, count=term, dtstart=start)
+
+        if isinstance(term, datetime.datetime):
+            self.term = calculate_term(start, term)
+        else:
+            self.term = term
+
+        self.schedule = rrule(freq=MONTHLY, count=self.term, dtstart=self.start_date)
         self.min_payment = (self.loan_amount * self.mpr) / (1 - (1 + self.mpr) ** -self.term)
         self.plan = self.amor_table()
         print(self.plan)
@@ -110,13 +124,7 @@ if __name__ == "__main__":
     print("Student Loans:")
     mohela1 = Loan(amount=4500, apr=.035, term=120)
     mohela2 = Loan(amount=5500, apr=.025, term=120)
-    # print(mohela1.amor_table(amended_term=10))
-    # print(mohela1.amor_table(750))
-    # print(mohela2.amor_table(750))
-    # mohela.amor_table(1000)
 
     # print("Mortgage:")
     mort = Loan(amount=250000, apr=.05, term=120)
-    # print(mort.amor_table())
-    # print(mort.amor_table(2500))
     print(mort.amor_table(monthly_payment=3000))

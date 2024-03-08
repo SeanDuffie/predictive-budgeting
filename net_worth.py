@@ -1,30 +1,49 @@
 """_summary_
 """
 import pandas as pd
+import datetime
 
-from .net_worth import *
+from net_worth import Database, Loan
 
 
 class NetWorth():
     """ This class is intended to help measure the overall net worth of my assets
     """
-    def __init__(self, db_file: str):
+    def __init__(self, db_name: str):
         # Load up database
-        self.db = Database()
+        self.db = Database(db_name=db_name)
+
         # Preview Existing data
         self.loans = []
         self.assets = []
         self.investments = []
         self.savings = []
 
-    def add_loan(self):
+    def add_loan(self, amount, apr, start, end, name):
         # Prompt for additional loans
-        self.loans.append(Loan())
+        new_loan = Loan(amount=amount, apr=apr, start=start, term=end, name=name)
+        self.loans.append(new_loan)
 
-    def remove_loan(self, name: str):
+    def remove_loan(self):
+        # Preview loans to identify which to delete
+        print("Previewing Options:")
+        for i, loan in enumerate(self.loans):
+            print(f"{i}) {loan.name}")
+
         # Identify which loan to remove
-        # Drop loan from database table
-        pass
+        index = int(input("Enter which loan you want to remove: "))
+        assert index >= 0
+        assert index < len(self.loans)
+
+        # Remove the loan
+        del self.loans[index]
+
+        # View modified list
+        # print("Viewing Results:")
+        # for i, loan in enumerate(self.loans):
+        #     print(f"{i}) {loan.name}")
+
+        # Update database table
 
     def add_asset(self):
         # Prompt for additional assets
@@ -72,3 +91,22 @@ class NetWorth():
 
 if __name__ == "__main__":
     my_networth = NetWorth("net_worth.db")
+
+    my_networth.add_loan(
+        start=datetime.datetime(2024, 4, 5),
+        end=datetime.datetime(2033, 9, 5),
+        amount=5677.25,
+        apr=.025,
+        name="Student Loan #1"
+    )
+
+    my_networth.add_loan(
+        start=datetime.datetime(2024, 4, 5),
+        end=datetime.datetime(2033, 9, 5),
+        amount=4777.83,
+        apr=.0348,
+        name="Student Loan #2"
+    )
+
+    my_networth.remove_loan()
+    my_networth.remove_loan()
