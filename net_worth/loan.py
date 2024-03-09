@@ -15,7 +15,7 @@ def calculate_term(start: datetime.datetime, end: datetime.datetime) -> int:
     ydif = end.year - start.year
     mdif = end.month - start.month
 
-    dif = ydif * 12 + mdif
+    dif = ydif * 12 + mdif + 1
     print(dif)
 
     return dif
@@ -97,6 +97,28 @@ class Loan():
         amortization_table = pd.DataFrame(data=payments, columns=headers)
 
         return amortization_table
+
+    def get_balance(self, date: datetime.datetime):
+        """ Grabs the remaining balance at a given time according to the plan
+
+        FIXME: This should be more generalized, look for matching month and year, not exact datetime
+        TODO: Add a class variable for history of payments
+        TODO: Separate payments into timeframes. Ex) You expect a pay raise in the future and can increase your payment amount
+        TODO: Add error handling for when the requested date doesn't exist
+
+        Args:
+            date (datetime.datetime): date of the requested payment
+
+        Returns:
+            float: The remaining balance at this stage in the payment plan
+        """
+        # Find the row of the Amortization table for the requested date
+        result = self.plan[self.plan["Date"] == date]
+
+        # Extract the balance amount from the table row
+        amount = result["Balance Remaining"].get(0)
+
+        return amount
 
     def make_payment(self, principal: float, monthly_payment: float):
         """ Helper function for amor_table()

@@ -80,10 +80,24 @@ class NetWorth():
 
     def date_net(self):
         # Add value of all Savings
+        savings = 0
+
         # Add value of all Investments
+        invest = 0
+
         # Add value of all Assets
+        assets = 0
+
         # Subtract value of all Loans
-        return 0
+        loans = 0
+        for loan in self.loans:
+            # loans += loan.get_balance(datetime.datetime.today())
+            loans += loan.get_balance(datetime.datetime(2024, 4, 5))
+
+        total = savings + invest + assets - loans
+        print(f"Total net worth: ${total}")
+
+        return total
 
     def project_net(self) -> pd.DataFrame:
         # Generate a Dataframe of Net Worth over time
@@ -108,5 +122,4 @@ if __name__ == "__main__":
         name="Student Loan #2"
     )
 
-    my_networth.remove_loan()
-    my_networth.remove_loan()
+    my_networth.date_net()
