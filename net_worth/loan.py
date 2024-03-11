@@ -10,15 +10,8 @@ import datetime
 import pandas as pd
 from dateutil.rrule import MONTHLY, rrule
 
+from .helpers import calculate_term
 
-def calculate_term(start: datetime.datetime, end: datetime.datetime) -> int:
-    ydif = end.year - start.year
-    mdif = end.month - start.month
-
-    dif = ydif * 12 + mdif + 1
-    print(dif)
-
-    return dif
 
 class Loan():
     """ The Loan object allows me to store data related to loans without having to retype
@@ -42,7 +35,7 @@ class Loan():
         else:
             self.start_date = start
 
-        if isinstance(term, datetime.datetime):
+        if isinstance(term, datetime.date) or isinstance(term, datetime.datetime):
             self.term = calculate_term(start, term)
         else:
             self.term = term
@@ -50,7 +43,7 @@ class Loan():
         self.schedule = rrule(freq=MONTHLY, count=self.term, dtstart=self.start_date)
         self.min_payment = (self.loan_amount * self.mpr) / (1 - (1 + self.mpr) ** -self.term)
         self.plan = self.amor_table()
-        print(self.plan)
+        # print(self.plan)
 
     def amor_table(self, monthly_payment: float = None, amended_term: int = None):
         """ Generates an amortization chart for the loan, can take multiple values of monthly payments.
@@ -68,9 +61,9 @@ class Loan():
         # Handle non-default monthly payment
         if monthly_payment is None:
             monthly_payment = self.min_payment
-            print(f"Using minimum payment of ${monthly_payment}")
+            print(f"{self.name} is using minimum payment of ${monthly_payment}")
         else:
-            print(f"Using manual payment of ${monthly_payment}")
+            print(f"{self.name} is using manual payment of ${monthly_payment}")
 
         # Handle non-default term length
         if amended_term is None:
@@ -78,7 +71,7 @@ class Loan():
         else:
             term_left = amended_term
             monthly_payment = (self.loan_amount * self.mpr) / (1 - (1 + self.mpr) ** - amended_term)
-            print(f"Using amended term of {term_left} months with a minimum payment of ${monthly_payment}")
+            print(f"{self.name} is using amended term of {term_left} months with a minimum payment of ${monthly_payment}")
 
         headers = ["Date", "Balance Remaining", "Applied to Principal", "Applied to Interest", "Total Interest"]
         payments = [[self.schedule[0], self.principal, 0, 0, 0]]
@@ -95,10 +88,11 @@ class Loan():
 
         # Convert list of payments to dataframe
         amortization_table = pd.DataFrame(data=payments, columns=headers)
+        amortization_table["Date"] = pd.to_datetime(amortization_table["Date"])
 
         return amortization_table
 
-    def get_balance(self, date: datetime.datetime):
+    def get_balance(self, date: datetime.date) -> float:
         """ Grabs the remaining balance at a given time according to the plan
 
         FIXME: This should be more generalized, look for matching month and year, not exact datetime
@@ -112,11 +106,20 @@ class Loan():
         Returns:
             float: The remaining balance at this stage in the payment plan
         """
+        date1 = datetime.datetime(date.year, date.month, 1)
+        date2 = datetime.datetime(date.year, date.month + 1, 1)
+
         # Find the row of the Amortization table for the requested date
-        result = self.plan[self.plan["Date"] == date]
+        result = self.plan.loc[(self.plan["Date"] >= date1)
+                               & (self.plan["Date"] < date2)].reset_index()
 
         # Extract the balance amount from the table row
         amount = result["Balance Remaining"].get(0)
+
+        # FIXME: Temporary error handling for calling a loan that hasn't been initialized yet
+        if amount is None:
+            # print(f"Loan ({self.name}) has not started yet!")
+            amount = 0
 
         return amount
 
