@@ -99,7 +99,10 @@ class NetWorth():
 
         return total
 
-    def project_net(self) -> pd.DataFrame:
+    def project_net(self, ) -> pd.DataFrame:
+        # TODO: Loop throught each "update" function until reaching the current date
+        # TODO: Each Update function should calculate interest and recurring changes
+        # TODO: Call the current value function for each item
         # Generate a Dataframe of Net Worth over time
         return pd.DataFrame()
 
