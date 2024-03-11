@@ -1,9 +1,9 @@
 """_summary_
 """
-import pandas as pd
 import datetime
 
-from net_worth import Database, Loan
+import pandas as pd
+from net_worth import Database, Loan, Savings
 
 
 class NetWorth():
@@ -63,24 +63,30 @@ class NetWorth():
         # Drop investment from database table
         pass
 
-    def add_savings(self):
+    def add_savings(self, deposit: float, start: datetime.date, apr: float, recur: float = 0):
         # Prompt for additional Savings
-        pass
+        new_sav = Savings(deposit=deposit, start=start, apr=apr, recur=recur)
+        self.savings.append(new_sav)
 
     def remove_savings(self):
-        # Identify which investment to remove
-        # Drop investment from database table
-        pass
+        # Preview savings to identify which to delete
+        print("Previewing Options:")
+        for i, sav in enumerate(self.savings):
+            print(f"{i}) {sav.name}")
+
+        # Identify which savings to remove
+        index = int(input("Enter which savings you want to remove: "))
+        assert index >= 0
+        assert index < len(self.savings)
+
+        # Remove the loan
+        del self.savings[index]
 
     def calculate_gross(self):
-        return 0
-
-    def calculate_debts(self):
-        return 0
-
-    def date_net(self):
         # Add value of all Savings
         savings = 0
+        for sav in self.savings:
+            savings += sav.balance
 
         # Add value of all Investments
         invest = 0
@@ -88,26 +94,61 @@ class NetWorth():
         # Add value of all Assets
         assets = 0
 
+        gross = savings + invest + assets
+
+        return gross
+
+    def calculate_debts(self):
         # Subtract value of all Loans
         loans = 0
         for loan in self.loans:
             # loans += loan.get_balance(datetime.datetime.today())
             loans += loan.get_balance(datetime.datetime(2024, 4, 5))
 
-        total = savings + invest + assets - loans
+        return loans
+
+    def calculate_net(self):
+        gross = self.calculate_gross()
+        debts = self.calculate_debts()
+
+        total = gross - debts
+
         print(f"Total net worth: ${total}")
 
         return total
+
+    def calculate_ratio(self):
+        gross = self.calculate_gross()
+        debts = self.calculate_debts()
+
+        ratio = (gross - debts) / (gross + debts)
+
+        print(f"Debt to Income Ratio: {ratio}")
+
+        return ratio
 
     def project_net(self, ) -> pd.DataFrame:
         # TODO: Loop throught each "update" function until reaching the current date
         # TODO: Each Update function should calculate interest and recurring changes
         # TODO: Call the current value function for each item
         # Generate a Dataframe of Net Worth over time
+
+        s = datetime.datetime(2024, 3, 31)
+        t = datetime.timedelta(1)
+        e = s + t
+        print(e)
+
         return pd.DataFrame()
 
 if __name__ == "__main__":
     my_networth = NetWorth("net_worth.db")
+
+    my_networth.add_savings(
+        deposit=10000,
+        start=datetime.date(2024, 4, 5),
+        apr=0.0435,
+        recur=2000
+    )
 
     my_networth.add_loan(
         start=datetime.datetime(2024, 4, 5),
@@ -125,4 +166,5 @@ if __name__ == "__main__":
         name="Student Loan #2"
     )
 
-    my_networth.date_net()
+    my_networth.calculate_net()
+    my_networth.calculate_ratio()
