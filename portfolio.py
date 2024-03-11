@@ -3,11 +3,11 @@
 import datetime
 
 import pandas as pd
-from net_worth import Database, Loan, Savings, Asset
+
+from net_worth import Asset, Database, Loan, Savings
 
 
-# FIXME: Rename to "Portfolio" soon
-class NetWorth():
+class Portfolio():
     """ This class is intended to help measure the overall net worth of my assets
     """
     def __init__(self, db_name: str):
@@ -221,23 +221,23 @@ class NetWorth():
         return pd.DataFrame()
 
 if __name__ == "__main__":
-    my_networth = NetWorth("net_worth.db")
+    portfolio = Portfolio("net_worth.db")
 
-    my_networth.add_savings(
+    portfolio.add_savings(
         deposit=10000,
         start=datetime.date(2024, 3, 5),
         apr=0.0435,
         recur=2000
     )
 
-    my_networth.add_savings(
+    portfolio.add_savings(
         deposit=10000,
         start=datetime.date(2024, 3, 5),
         apr=0.07,
         recur=500
     )
 
-    my_networth.add_loan(
+    portfolio.add_loan(
         start=datetime.datetime(2024, 3, 5),
         end=datetime.datetime(2033, 9, 5),
         amount=5677.25,
@@ -245,7 +245,7 @@ if __name__ == "__main__":
         name="Student Loan #1"
     )
 
-    my_networth.add_loan(
+    portfolio.add_loan(
         start=datetime.datetime(2024, 3, 5),
         end=datetime.datetime(2033, 9, 5),
         amount=4777.83,
@@ -253,34 +253,34 @@ if __name__ == "__main__":
         name="Student Loan #2"
     )
 
-    my_networth.calculate_net()
-    # my_networth.calculate_ratio()
+    portfolio.calculate_net()
+    # portfolio.calculate_ratio()
 
     # Home cost is an Asset
-    home_val = 330000
-    purchase_date = datetime.date(2024, 3, 1)
-    my_networth.add_asset(
-        init_value=home_val,
-        start=purchase_date,
+    HOME_VAL = 330000
+    PURCHASE_DATE = datetime.date(2024, 3, 1)
+    portfolio.add_asset(
+        init_value=HOME_VAL,
+        start=PURCHASE_DATE,
         apr=0.08,
         name="House"
     )
 
     # Down payment is subtracted from savings
-    down_payment = home_val * 0.2
-    my_networth.savings[0].modify_balance(-down_payment, purchase_date, "Placed down payment on house")
+    DOWN_PAYMENT = HOME_VAL * 0.2
+    portfolio.savings[0].modify_balance(-DOWN_PAYMENT, PURCHASE_DATE, "Placed down payment on house")
 
     # Mortgage is home cost minus down payment
-    mort = home_val - down_payment
-    mort_date = purchase_date + datetime.timedelta(3650)
-    mort_term = 120
-    my_networth.add_loan(
-        start=purchase_date,
-        end=mort_term,
-        amount=mort,
+    MORT = HOME_VAL - DOWN_PAYMENT
+    MORT_DATE = PURCHASE_DATE + datetime.timedelta(3650)
+    MORT_TERM = 120
+    portfolio.add_loan(
+        start=PURCHASE_DATE,
+        end=MORT_TERM,
+        amount=MORT,
         apr=.06,
         name="Mortgage"
     )
 
-    my_networth.calculate_net()
-    my_networth.calculate_ratio()
+    portfolio.calculate_net()
+    portfolio.calculate_ratio()
