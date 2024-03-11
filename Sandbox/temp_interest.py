@@ -63,7 +63,7 @@ if __name__ == "__main__":
 
     savings = 2500
     invest = 1000
-    mortgage = 3000
+    MORT = 3000
 
     # savings_total = repeating_investment(savings, 0.043, timespan/12, 1)
     # print(f"Saved = {savings_total}")
