@@ -12,7 +12,7 @@ class Portfolio():
     """
     def __init__(self, db_name: str):
         # Load up database
-        self.db = Database(db_name=db_name)
+        # self.db = Database(db_name=db_name)
 
         # Preview Existing data
         self.loans: list[Loan] = []
@@ -181,7 +181,7 @@ class Portfolio():
 
     def calculate_ratio(self):
         """ Calculate the ratio of assets compared to debts
-        
+
         FIXME: I think I did this wrong, should it be more of a budget thing than a portfolio?
 
         Returns:
@@ -192,7 +192,7 @@ class Portfolio():
 
         ratio = (gross - debts) / (gross + debts)
 
-        # print(f"Debt to Income Ratio: {ratio}")
+        print(f"Debt to Income Ratio: {ratio}")
 
         return ratio
 
@@ -223,20 +223,25 @@ class Portfolio():
 if __name__ == "__main__":
     portfolio = Portfolio("net_worth.db")
 
+    # American Express HYSA
     portfolio.add_savings(
         deposit=10000,
         start=datetime.date(2024, 3, 5),
         apr=0.0435,
         recur=2000
+        name="American Express HYSA"
     )
 
+    # Stock Portfolio
     portfolio.add_savings(
         deposit=10000,
         start=datetime.date(2024, 3, 5),
         apr=0.07,
-        recur=500
+        recur=500,
+        name="Stocks"
     )
 
+    # Student Loans 1
     portfolio.add_loan(
         start=datetime.datetime(2024, 3, 5),
         end=datetime.datetime(2033, 9, 5),
@@ -254,7 +259,7 @@ if __name__ == "__main__":
     )
 
     portfolio.calculate_net()
-    # portfolio.calculate_ratio()
+    portfolio.calculate_ratio()
 
     # Home cost is an Asset
     HOME_VAL = 330000
