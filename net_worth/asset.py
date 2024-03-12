@@ -5,16 +5,14 @@
 import datetime
 
 class Asset:
-    def __init__(self, init_value: float, expected_apr: float, start: datetime.date = None, name: str = "Asset"):
+    def __init__(self, init_value: float, expected_apr: float, start: datetime.date = None):
         """ Populate the initial parameters for the asset
 
         Args:
             init_value (float): Initial value of the asset when purchased
             expected_apr (float): Expected annual rate, >1 is appreciating, <1 is depreciating
             term (int, optional): Number of months this asset is owned. Defaults to None.
-            name (str, optional): User Friendly name for this asset. Defaults to "Asset".
         """
-        self.name = name
         self.init_value = init_value        # TODO: may not need this if the init value can be found in the history
         self.value = init_value
         self.expected_mpr = expected_apr / 12

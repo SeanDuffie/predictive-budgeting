@@ -17,15 +17,13 @@ class Loan():
     """ The Loan object allows me to store data related to loans without having to retype
         it every time I want to try to experiment with new parameters
     """
-    def __init__(self, amount: float, apr: float, start: datetime.date = None, term: int = 120, name: str = "Loan"):
+    def __init__(self, amount: float, apr: float, start: datetime.date = None, term: int = 120):
         """ Populate the inital parameters of the loan
         Args:
             amount (float): Total starting value for the loan
             apr (float): annual percentage rate
             term (int): maximum number of months for this loan to be paid off
-            name (str, optional): User Friendly name for this loan. Defaults to "Loan".
         """
-        self.name = name
         self.loan_amount = amount
         self.principal = amount
         self.mpr = apr / 12
@@ -41,9 +39,25 @@ class Loan():
             self.term = term
 
         self.schedule = rrule(freq=MONTHLY, count=self.term, dtstart=self.start_date)
-        self.min_payment = (self.loan_amount * self.mpr) / (1 - (1 + self.mpr) ** -self.term)
+        self.payment = (self.loan_amount * self.mpr) / (1 - (1 + self.mpr) ** -self.term)
         self.plan = self.amor_table()
         # print(self.plan)
+
+    def set_payment(self, save: bool = False) -> float:
+        """_summary_
+
+        Args:
+            save (bool, optional): _description_. Defaults to False.
+
+        Returns:
+            float: _description_
+        """
+        pay = (self.loan_amount * self.mpr) / (1 - (1 + self.mpr) ** -self.term)
+
+        if save:
+            self.payment = pay
+
+        return pay
 
     def amor_table(self, monthly_payment: float = None, amended_term: int = None):
         """ Generates an amortization chart for the loan, can take multiple values of monthly payments.
@@ -60,10 +74,10 @@ class Loan():
 
         # Handle non-default monthly payment
         if monthly_payment is None:
-            monthly_payment = self.min_payment
-            print(f"{self.name} is using minimum payment of ${monthly_payment}")
+            monthly_payment = self.payment
+            print(f"Using minimum payment of ${monthly_payment}")
         else:
-            print(f"{self.name} is using manual payment of ${monthly_payment}")
+            print(f"Using manual payment of ${monthly_payment}")
 
         # Handle non-default term length
         if amended_term is None:
@@ -71,7 +85,7 @@ class Loan():
         else:
             term_left = amended_term
             monthly_payment = (self.loan_amount * self.mpr) / (1 - (1 + self.mpr) ** - amended_term)
-            print(f"{self.name} is using amended term of {term_left} months with a minimum payment of ${monthly_payment}")
+            print(f"Using amended term of {term_left} months with a minimum payment of ${monthly_payment}")
 
         headers = ["Date", "Balance Remaining", "Applied to Principal", "Applied to Interest", "Total Interest"]
         payments = [[self.schedule[0], self.principal, 0, 0, 0]]
@@ -118,7 +132,6 @@ class Loan():
 
         # FIXME: Temporary error handling for calling a loan that hasn't been initialized yet
         if amount is None:
-            # print(f"Loan ({self.name}) has not started yet!")
             amount = 0
 
         return amount

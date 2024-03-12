@@ -15,10 +15,10 @@ class Portfolio():
         # self.db = Database(db_name=db_name)
 
         # Preview Existing data
-        self.loans: list[Loan] = []
-        self.assets: list[Asset] = []
-        self.investments = []
-        self.savings: list[Savings] = []
+        self.loans: dict[str, Loan] = {}
+        self.assets: dict[str, Asset] = {}
+        self.investments: dict[str, Savings] = {}
+        self.savings: dict[str, Savings] = {}
 
     def add_loan(self, amount: float, apr: float, start: datetime.date, end: datetime.date, name: str):
         """ Add a debt to your portfolio
@@ -35,16 +35,15 @@ class Portfolio():
             amount=amount,
             apr=apr,
             start=start,
-            term=end,
-            name=name
+            term=end
         )
-        self.loans.append(new_loan)
+        self.loans[name] = new_loan
 
     def remove_loan(self):
         # Preview loans to identify which to delete
         print("Previewing Options:")
-        for i, loan in enumerate(self.loans):
-            print(f"{i}) {loan.name}")
+        for key, loan in self.loans.items():
+            print(f"{key}) {loan.get_balance()}")
 
         # Identify which loan to remove
         index = int(input("Enter which loan you want to remove: "))
@@ -74,26 +73,43 @@ class Portfolio():
         new_asset = Asset(
             init_value=init_value,
             expected_apr=apr,
-            start=start,
-            name=name
+            start=start
         )
-        self.assets.append(new_asset)
+        self.assets[name] = new_asset
 
     def remove_asset(self):
-        # Identify which asset to remove
-        # Drop Asset from database table
-        pass
+        # Preview savings to identify which to delete
+        print("Previewing Options:")
+        for key, asset in self.assets.items():
+            print(f"{key}: {asset.value}")
+
+        # Identify which savings to remove
+        index = input("Enter which savings you want to remove: ")
+        assert index >= 0
+        assert index < len(self.savings)
+
+        # Remove the loan
+        self.assets.pop(index)
 
     def add_investment(self):
         # Prompt for additional investments
         pass
 
     def remove_investment(self):
-        # Identify which investment to remove
-        # Drop investment from database table
-        pass
+        # Preview savings to identify which to delete
+        print("Previewing Options:")
+        for key, inv in self.investments.items():
+            print(f"{key}: {inv.balance}")
 
-    def add_savings(self, deposit: float, start: datetime.date, apr: float, recur: float = 0):
+        # Identify which savings to remove
+        index = input("Enter which investment you want to remove: ")
+        assert index >= 0
+        assert index < len(self.investments)
+
+        # Remove the loan
+        self.investments.pop(index)
+
+    def add_savings(self, deposit: float, start: datetime.date, apr: float, recur: float = 0, name: str = "Savings"):
         """ Add a savings account to be tracked in your portfolio
 
         Args:
@@ -101,24 +117,25 @@ class Portfolio():
             start (datetime.date): date that tracking began
             apr (float): interest rate on account (mainly for HYSA)
             recur (float, optional): Recurring deposits going to the account. Defaults to 0.
+            name (str, optional): Name to store in the savings dictionary. Defaults to "Savings".
         """
         # Prompt for additional Savings
         new_sav = Savings(deposit=deposit, start=start, apr=apr, recur=recur)
-        self.savings.append(new_sav)
+        self.savings[name] = new_sav
 
     def remove_savings(self):
         # Preview savings to identify which to delete
         print("Previewing Options:")
-        for i, sav in enumerate(self.savings):
-            print(f"{i}) {sav.name}")
+        for key, val in self.savings.items():
+            print(f"{key}: {val.balance}")
 
         # Identify which savings to remove
-        index = int(input("Enter which savings you want to remove: "))
+        index = input("Enter which savings you want to remove: ")
         assert index >= 0
         assert index < len(self.savings)
 
         # Remove the loan
-        del self.savings[index]
+        self.savings.pop(index)
 
     def calculate_gross(self):
         """ Sums together the values of all portfolio
@@ -130,17 +147,17 @@ class Portfolio():
         """
         # Add value of all Savings
         savings = 0
-        for sav in self.savings:
+        for sav in self.savings.values():
             savings += sav.balance
 
         # Add value of all Investments
         invest = 0
-        for inv in self.investments:
+        for inv in self.investments.values():
             savings += inv.balance
 
         # Add value of all Assets
         assets = 0
-        for ast in self.assets:
+        for ast in self.assets.values():
             assets += ast.value
 
         gross = savings + invest + assets
@@ -157,7 +174,7 @@ class Portfolio():
         """
         # Subtract value of all Loans
         loans = 0
-        for loan in self.loans:
+        for loan in self.loans.values():
             # loans += loan.get_balance(datetime.date.today())
             loans += loan.get_balance(datetime.date(2024, 4, 5))
 
@@ -228,7 +245,7 @@ if __name__ == "__main__":
         deposit=10000,
         start=datetime.date(2024, 3, 5),
         apr=0.0435,
-        recur=2000
+        recur=2000,
         name="American Express HYSA"
     )
 
@@ -273,7 +290,7 @@ if __name__ == "__main__":
 
     # Down payment is subtracted from savings
     DOWN_PAYMENT = HOME_VAL * 0.2
-    portfolio.savings[0].modify_balance(-DOWN_PAYMENT, PURCHASE_DATE, "Placed down payment on house")
+    portfolio.savings["American Express HYSA"].modify_balance(-DOWN_PAYMENT, PURCHASE_DATE, "Placed down payment on house")
 
     # Mortgage is home cost minus down payment
     MORT = HOME_VAL - DOWN_PAYMENT
@@ -289,3 +306,4 @@ if __name__ == "__main__":
 
     portfolio.calculate_net()
     portfolio.calculate_ratio()
+    print(portfolio.savings["American Express HYSA"].history)
