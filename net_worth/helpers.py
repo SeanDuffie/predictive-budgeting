@@ -9,7 +9,7 @@ def calculate_term(start: datetime.datetime, end: datetime.datetime) -> int:
 
     return dif
 
-def date_within_range(self, day, start, end):
+def date_within_range(self, day: datetime.datetime, start: datetime.datetime, end: datetime.datetime):
     pass
 
 if __name__ == "__main__":

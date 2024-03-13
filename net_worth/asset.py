@@ -4,6 +4,9 @@
 """
 import datetime
 
+from dateutil.relativedelta import relativedelta
+
+
 class Asset:
     def __init__(self, init_value: float, expected_apr: float, start: datetime.date = None):
         """ Populate the initial parameters for the asset
@@ -19,6 +22,7 @@ class Asset:
 
         self.history = [(self.value, init_value, start, "Started tracking asset")]
         self.last_update = start
+        self.interval = relativedelta(months=1)
 
     def update(self, day: datetime.date = None):
         """ Call every pay period to update all transactions
@@ -27,11 +31,13 @@ class Asset:
         """
         if day is None:
             day = datetime.date.today()
-        self.last_update = day
 
-        interest = self.value * (self.expected_mpr)
-        self.value += interest
-        self.history.append((self.value, interest, day, "Preciation Applied"))
+        while self.last_update < day:
+            interest = self.value * (self.expected_mpr)
+            self.value += interest
+            self.history.append((self.value, interest, self.last_update, "Preciation Applied"))
+
+            self.last_update += self.interval
 
     def modify_value(self, amount: float, day: datetime.date = None, note: str = "Modified value"):
         """ Use this if there are changes that affect the value of the Asset
@@ -50,24 +56,22 @@ class Asset:
 
         self.value += amount
         self.history.append((self.value, amount, day, note))
+        
+    def get_value(self, day: datetime.date):
+        # if day < self.history["Date"].get(0):
+        if day < self.history[0][2]:
+            return 0
+        else:
+            return self.value
 
 if __name__ == "__main__":
-    HOUSE = Asset(330000, 0.08, 360, "House")
+    purchase_date = datetime.date(2025, 1, 1)
+    HOUSE = Asset(330000, 0.08, purchase_date)
 
-    HOUSE.update()
-    HOUSE.update()
-    HOUSE.modify_value(7000, datetime.date.today(), "Replaced Drywall")
-    HOUSE.update()
-    HOUSE.update()
-    HOUSE.update()
-    HOUSE.update()
-    HOUSE.update()
-    HOUSE.update()
-    HOUSE.update()
-    HOUSE.modify_value(-3000, datetime.date.today(), "Basement Flooded")
-    HOUSE.update()
-    HOUSE.update()
-    HOUSE.update()
+    # TODO: Sort history chronologically, maybe make into dataframe
+    HOUSE.modify_value(7000, datetime.date(2024, 2, 1), "Refinished Tile")
+    HOUSE.modify_value(-3000, datetime.date(2024, 4, 1), "Water Damage")
+    HOUSE.update(datetime.date(2026, 1, 1))
 
     print("House value history:")
     for item in HOUSE.history:

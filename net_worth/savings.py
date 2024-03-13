@@ -2,6 +2,8 @@
 """
 import datetime
 
+from dateutil.relativedelta import relativedelta
+
 
 class Savings:
     """_summary_
@@ -13,6 +15,7 @@ class Savings:
 
         self.history = [(self.balance, deposit, start, "Initial deposit")]
         self.last_update = start
+        self.interval = relativedelta(months=1)
 
     def update(self, day: datetime.date = None):
         """ Call every pay period to update all transactions
@@ -21,15 +24,17 @@ class Savings:
         """
         if day is None:
             day = datetime.date.today()
-        self.last_update = day
 
-        if self.recur is not None:
-            self.balance += self.recur[0]
-            self.history.append((self.balance, self.recur[0], day, "Recurring Deposit"))
+        while self.last_update < day:
+            if self.recur is not None:
+                self.balance += self.recur[0]
+                self.history.append((self.balance, self.recur[0], self.last_update, "Recurring Deposit"))
 
-        interest = self.balance * (self.mpr)
-        self.balance += interest
-        self.history.append((self.balance, interest, day, "Interest Applied"))
+            interest = self.balance * (self.mpr)
+            self.balance += interest
+            self.history.append((self.balance, interest, self.last_update, "Interest Applied"))
+
+            self.last_update += self.interval
 
     def update_recurring(self, amount: float, start: datetime.date = None, interval: int = 1):
         """ Update the recurring deposits going to this account
@@ -61,18 +66,8 @@ if __name__ == "__main__":
     ACC = Savings(10000, datetime.date.today(), 0.0435)
     ACC.update_recurring(2000)
 
-    ACC.update()
-    ACC.update()
-    ACC.update()
-    ACC.update()
-    ACC.update()
-    ACC.update()
-    ACC.update()
-    ACC.update()
-    ACC.update()
-    ACC.update()
-    ACC.update()
-    ACC.update()
+    # TODO: Sort history chronologically, maybe make into dataframe
+    ACC.update(datetime.date(2026, 1, 1))
 
     print("Savings history:")
     for item in ACC.history:

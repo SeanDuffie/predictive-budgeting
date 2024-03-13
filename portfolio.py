@@ -137,6 +137,17 @@ class Portfolio():
         # Remove the loan
         self.savings.pop(index)
 
+    def update_all(self, day):
+        print("Updating Savings")
+        for key, val in self.savings.items():
+            val.update(day)
+            print(f"\t{key}: {val.balance}")
+
+        print("Updating Assets")
+        for key, val in self.assets.items():
+            val.update(day)
+            print(f"\t{key}: {val.value}")
+
     def calculate_gross(self):
         """ Sums together the values of all portfolio
 
@@ -164,7 +175,7 @@ class Portfolio():
 
         return gross
 
-    def calculate_debts(self):
+    def calculate_debts(self, day: datetime.date):
         """ Sum together the current value of all debts
 
         TODO: integrate timeline, take date as parameter
@@ -176,11 +187,11 @@ class Portfolio():
         loans = 0
         for loan in self.loans.values():
             # loans += loan.get_balance(datetime.date.today())
-            loans += loan.get_balance(datetime.date(2024, 4, 5))
+            loans += loan.get_balance(day)
 
         return loans
 
-    def calculate_net(self):
+    def calculate_net(self, day: datetime.date):
         """ Calculate the net worth
 
         Returns:
@@ -188,7 +199,7 @@ class Portfolio():
         """
         print(f"{len(self.savings)} Savings | {len(self.investments)} Investments | {len(self.assets)} Assets | {len(self.loans)} Loans")
         gross = self.calculate_gross()
-        debts = self.calculate_debts()
+        debts = self.calculate_debts(day)
 
         total = gross - debts
 
@@ -196,7 +207,7 @@ class Portfolio():
 
         return total
 
-    def calculate_ratio(self):
+    def calculate_ratio(self, day: datetime.date):
         """ Calculate the ratio of assets compared to debts
 
         FIXME: I think I did this wrong, should it be more of a budget thing than a portfolio?
@@ -205,7 +216,7 @@ class Portfolio():
             float: Ratio of debts to assets. 0 is even, negative is in debt, positive is best
         """
         gross = self.calculate_gross()
-        debts = self.calculate_debts()
+        debts = self.calculate_debts(day)
 
         ratio = (gross - debts) / (gross + debts)
 
@@ -275,12 +286,14 @@ if __name__ == "__main__":
         name="Student Loan #2"
     )
 
-    portfolio.calculate_net()
-    portfolio.calculate_ratio()
+    TL2 = datetime.date(2025, 1, 1)
+    portfolio.update_all(TL2)
+    portfolio.calculate_net(TL2)
+    portfolio.calculate_ratio(TL2)
 
     # Home cost is an Asset
     HOME_VAL = 330000
-    PURCHASE_DATE = datetime.date(2024, 3, 1)
+    PURCHASE_DATE = datetime.date(2025, 1, 1)
     portfolio.add_asset(
         init_value=HOME_VAL,
         start=PURCHASE_DATE,
@@ -289,7 +302,7 @@ if __name__ == "__main__":
     )
 
     # Down payment is subtracted from savings
-    DOWN_PAYMENT = HOME_VAL * 0.2
+    DOWN_PAYMENT = HOME_VAL * 0.1
     portfolio.savings["American Express HYSA"].modify_balance(-DOWN_PAYMENT, PURCHASE_DATE, "Placed down payment on house")
 
     # Mortgage is home cost minus down payment
@@ -304,6 +317,15 @@ if __name__ == "__main__":
         name="Mortgage"
     )
 
-    portfolio.calculate_net()
-    portfolio.calculate_ratio()
-    print(portfolio.savings["American Express HYSA"].history)
+    TL3 = datetime.date(2026, 1, 1)
+    portfolio.update_all(TL3)
+    portfolio.calculate_net(TL3)
+    portfolio.calculate_ratio(TL3)
+
+    print("\nHYSA history:")
+    for event in portfolio.savings["American Express HYSA"].history:
+        print(f"\t{event}")
+
+    print("\nETRADE history:")
+    for event in portfolio.savings["Stocks"].history:
+        print(f"\t{event}")

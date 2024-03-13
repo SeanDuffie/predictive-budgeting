@@ -122,6 +122,10 @@ class Loan():
         """
         date1 = datetime.datetime(date.year, date.month, 1)
         date2 = datetime.datetime(date.year, date.month + 1, 1)
+        if date1 < self.plan["Date"].get(0):
+            print("Too Early")
+        elif date1 > self.plan["Date"].get(self.plan["Date"].size - 1):
+            print("Too Late")
 
         # Find the row of the Amortization table for the requested date
         result = self.plan.loc[(self.plan["Date"] >= date1)
