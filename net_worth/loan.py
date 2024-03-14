@@ -9,8 +9,7 @@ import datetime
 
 import pandas as pd
 from dateutil.rrule import MONTHLY, rrule
-
-from .helpers import calculate_term
+from helpers import calculate_term
 
 
 class Loan():
@@ -44,7 +43,7 @@ class Loan():
         # print(self.plan)
 
     def set_payment(self, save: bool = False) -> float:
-        """_summary_
+        """ TODO: This doesn't do anything useful yet, maybe use it to create payment plan
 
         Args:
             save (bool, optional): _description_. Defaults to False.
@@ -59,10 +58,8 @@ class Loan():
 
         return pay
 
-    def amor_table(self, monthly_payment: float = None, amended_term: int = None):
+    def amor_table(self, monthly_payment: float = None, amended_term: int = None, save: bool = False):
         """ Generates an amortization chart for the loan, can take multiple values of monthly payments.
-
-        TODO: Associate Datetime with first bill and generate an actual schedule
 
         Args:
             monthly_payment (float, optional): the monthly payment towards the loan. Defaults to minimum payment.
@@ -75,9 +72,9 @@ class Loan():
         # Handle non-default monthly payment
         if monthly_payment is None:
             monthly_payment = self.payment
-            print(f"Using minimum payment of ${monthly_payment}")
-        else:
-            print(f"Using manual payment of ${monthly_payment}")
+            # print(f"Using minimum payment of ${monthly_payment}")
+        # else:
+        #     print(f"Using manual payment of ${monthly_payment}")
 
         # Handle non-default term length
         if amended_term is None:
@@ -85,34 +82,67 @@ class Loan():
         else:
             term_left = amended_term
             monthly_payment = (self.loan_amount * self.mpr) / (1 - (1 + self.mpr) ** - amended_term)
-            print(f"Using amended term of {term_left} months with a minimum payment of ${monthly_payment}")
+            # print(f"Using amended term of {term_left} months with a minimum payment of ${monthly_payment}")
 
-        headers = ["Date", "Balance Remaining", "Applied to Principal", "Applied to Interest", "Total Interest"]
-        payments = [[self.schedule[0], self.principal, 0, 0, 0]]
+        headers = ["Date", "Balance Remaining", "Payment", "Applied to Principal", "Applied to Interest", "Total Interest"]
+        payments = [[self.schedule[0], self.principal, 0, 0, 0, 0]]
         total_interest = 0
         balance = self.principal
 
+        def make_payment(principal: float, monthly_payment: float, mpr: float):
+            """ Helper function for amor_table()
+
+            Calculates the new principal after making a monthly payment
+
+            Args:
+                principal (float): original principal
+                monthly_payment (float): monthly bill going towards loan TODO: weekly option?
+                mpr (float): the interest rate on a monthly scale
+
+            Returns:
+                tuple: a tuple containing the new principal, principal paid, and interest paid
+            """
+            # Calculate the portions going to interest and principal
+            current_interest_payment = principal * mpr
+            current_principal_payment = monthly_payment - current_interest_payment
+            principal -= current_principal_payment
+
+            return [
+                round(principal, 2),
+                round(current_principal_payment, 2),
+                round(current_interest_payment, 2)
+            ]
+
         # Loop through the payment term
         while balance > monthly_payment and term_left > 0:
-            balance, app_principal, app_interest = self.make_payment(balance, monthly_payment)
+            balance, app_principal, app_interest = make_payment(balance, monthly_payment, self.mpr)
             total_interest += app_interest
 
-            payments.append([self.schedule[self.term-term_left+1], balance, app_principal, app_interest, total_interest])
+            payments.append(
+                [
+                    self.schedule[self.term-term_left+1],
+                    balance,
+                    round(monthly_payment, 2),
+                    app_principal,
+                    app_interest,
+                    total_interest
+                ]
+            )
             term_left -= 1
 
         # Convert list of payments to dataframe
         amortization_table = pd.DataFrame(data=payments, columns=headers)
         amortization_table["Date"] = pd.to_datetime(amortization_table["Date"])
 
+        if save:
+            self.plan = amortization_table
+
         return amortization_table
 
     def get_balance(self, date: datetime.date) -> float:
         """ Grabs the remaining balance at a given time according to the plan
 
-        FIXME: This should be more generalized, look for matching month and year, not exact datetime
-        TODO: Add a class variable for history of payments
         TODO: Separate payments into timeframes. Ex) You expect a pay raise in the future and can increase your payment amount
-        TODO: Add error handling for when the requested date doesn't exist
 
         Args:
             date (datetime.datetime): date of the requested payment
@@ -123,50 +153,43 @@ class Loan():
         date1 = datetime.datetime(date.year, date.month, 1)
         date2 = datetime.datetime(date.year, date.month + 1, 1)
         if date1 < self.plan["Date"].get(0):
-            print("Too Early")
+            # print("Too Early")
+            amount = 0
         elif date1 > self.plan["Date"].get(self.plan["Date"].size - 1):
-            print("Too Late")
+            # print("Too Late")
+            amount = 0
+        else:
+            # Find the row of the Amortization table for the requested date
+            result = self.plan.loc[(self.plan["Date"] >= date1)
+                                & (self.plan["Date"] < date2)].reset_index()
 
-        # Find the row of the Amortization table for the requested date
-        result = self.plan.loc[(self.plan["Date"] >= date1)
-                               & (self.plan["Date"] < date2)].reset_index()
-
-        # Extract the balance amount from the table row
-        amount = result["Balance Remaining"].get(0)
+            # Extract the balance amount from the table row
+            amount = result["Balance Remaining"].get(0)
 
         # FIXME: Temporary error handling for calling a loan that hasn't been initialized yet
         if amount is None:
+            print("This should never be printed")
             amount = 0
 
         return amount
 
-    def make_payment(self, principal: float, monthly_payment: float):
-        """ Helper function for amor_table()
-
-        Calculates the new principal after making a monthly payment, then
-
-        Args:
-            principal (float): original principal
-            monthly_payment (float): monthly bill going towards loan (towards both principal and interest)
-
-        Returns:
-            tuple: a tuple containing the new principal, the amount applied to principal, and the amount to interest
-        """
-        # Calculate the amount of interest generated this month
-        current_interest_payment = principal * self.mpr
-        # Calculate the amount of montly payment that goes towards the principal
-        current_principal_payment = monthly_payment - current_interest_payment
-
-        principal -= current_principal_payment
-
-        return [round(principal, 2), round(current_principal_payment, 2), round(current_interest_payment, 2)]
-
 
 if __name__ == "__main__":
     print("Student Loans:")
-    mohela1 = Loan(amount=4500, apr=.035, term=120)
-    mohela2 = Loan(amount=5500, apr=.025, term=120)
+    school = datetime.date(2024, 3, 1)
+    mohela1 = Loan(amount=4500, apr=.035, start=school, term=120)
+    mohela2 = Loan(amount=5500, apr=.025, start=school, term=120)
+    print(mohela1.amor_table())
+    print(mohela2.amor_table())
+    print(mohela1.amor_table(250))
+    print(mohela2.amor_table(250))
 
     # print("Mortgage:")
-    mort = Loan(amount=250000, apr=.05, term=120)
+    house = datetime.date(2026, 3, 1)
+    mort = Loan(amount=250000, apr=.05, start=house, term=120)
+    print(mort.amor_table())
     print(mort.amor_table(monthly_payment=3000))
+    print(mort.get_balance(school))
+    print(mort.get_balance(house))
+    print(mort.get_balance(datetime.date(2036, 2, 1)))
+    print(mort.get_balance(datetime.date(2036, 3, 1)))
