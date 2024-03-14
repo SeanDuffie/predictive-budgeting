@@ -1,5 +1,7 @@
 """ stock.py
     
+References:
+- List of Stocks: https://www.nasdaq.com/market-activity/stocks/screener
 """
 import numpy as np
 import pandas as pd
