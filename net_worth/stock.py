@@ -1,5 +1,5 @@
 """ stock.py
-    
+
 References:
 - List of Stocks: https://www.nasdaq.com/market-activity/stocks/screener
 """
@@ -36,7 +36,7 @@ class Stock:
         new_col = f"MA_{feature}_{window_size}"
         self.df[new_col] = self.df[feature].rolling(window=window_size).mean()
         return self.df
-    
+
     def Volatility(self, feature: str, window_size: int) -> pd.DataFrame:
         """ Volatility
             Calculates the Volatility of a certain feature over a given window of time
@@ -53,7 +53,7 @@ class Stock:
         returns.fillna(0, inplace=True)
         self.df[new_col] = returns.rolling(window=window_size).std()*np.sqrt(window_size)
         return self.df
-    
+
     def RSI(self, feature: str, window_size: int) -> pd.DataFrame:
         """ Relative Strength Index
             Calculates the Momentum of the stock based on previous data

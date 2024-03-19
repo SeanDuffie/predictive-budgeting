@@ -29,7 +29,7 @@ import pandas
 
 from transaction import Transaction  # , Expense, Income
 
-RTDIR = os.getcwd()
+RTDIR = os.path.dirname(__file__)
 
 class Database:
     """ Objectified database for budget organization
