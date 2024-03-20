@@ -4,12 +4,12 @@ from income import Income
 
 distribution = {
     "Donations": 50,
+    "Insurance": 0,
     "Housing": 1700,
     "Utilities": 200,
     "Internet": 90,
     "Transportation": 80,
     "Food": 250,
-    "Insurance": 0,
     "Debts (minimum)": 100,
     "HYSA (Emergency)": 2500,
     "Investments": 500,
@@ -28,7 +28,6 @@ class Budget():
 
         # Collect Income and Region
         self.income = Income(gross, state)
-        self.taxes = self.income.taxes / 12
         self.net = self.income.net_monthly
         self.remaining = self.net
 
@@ -38,14 +37,30 @@ class Budget():
         return distribution
 
     def apply_budget(self, budget_dict: dict):
-        remaining = self.remaining
-        # TODO: (FOO1) Subtract Deductibles
+        remaining = self.income.gross_monthly
+        ### Pre Tax ###
+        # TODO: (FOO1) Subtract Deductibles from gross
+        donations = budget_dict["Donations"]
+        budget_dict.pop("Donations")
+        self.income.add_deductible(donations)
+        remaining -= donations
+
+        insurance = budget_dict["Insurance"]
+        budget_dict.pop("Insurance")
+        self.income.add_deductible(insurance)
+        remaining -= insurance
 
 
-        # TODO: (FOO2) Subtract Employer 401K Match
 
+        # TODO: (FOO2) Subtract Employer 401K Match from gross
 
-        # TODO: Subtract Expenses
+        # Calculate Tax
+        taxes = self.income.taxes / 12
+
+        # Subtract tax
+        remaining -= taxes
+        ### Post Tax ###
+        # TODO: Subtract Living Expenses
         for key, value in budget_dict.items():
             remaining -= value
             print(f"Spending ${value} on {key}. New balance = ${remaining}")
