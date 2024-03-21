@@ -34,6 +34,8 @@ class Income():
             - Gross Income - amount of income before any taxes
             - AGI - Adjusted Gross Income, gross income minus some deductions
             - MAGI - Modified Adjusted Gross Income, TODO
+            - Standard Deduction - The portion of income not subject to tax,
+                this will be used if itemized deductions are not enough
 
         NOTE: What is Taxable Income?
             1. Retirement contributions
