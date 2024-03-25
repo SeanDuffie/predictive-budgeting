@@ -5,7 +5,7 @@ from income import Income
 distribution = {
     "Donations": 50,
     "Insurance": 0,
-    "Housing": 1700,
+    "Housing": 1450,
     "Utilities": 200,
     "Internet": 90,
     "Transportation": 80,
@@ -50,7 +50,11 @@ class Budget():
         self.income.add_deductible(insurance)
         remaining -= insurance
 
-
+        # splittable = 1990
+        # splittable_term = splittable * 14 = 27860
+        # divided = (splittable / 2) * 3 = 3501
+        # spread_diff = (splittable_term - divided) / 14 250
+        # new_rent = rent - spread_diff = 1450
 
         # TODO: (FOO2) Subtract Employer 401K Match from gross
 
@@ -90,8 +94,22 @@ class Budget():
 
         self.remaining = remaining
         return remaining
+    
+    def gen_percents(self, budget_dict: dict):
+        gross_ratios = budget_dict.copy()
+        net_ratios = budget_dict.copy()
+
+        for key, val in budget_dict.items():
+            gross_ratios[key]= val / self.income.gross_monthly
+            net_ratios[key] = val / self.income.net_monthly
+
+        # if debug:
+        print("\nExpense \tAmount \tGross \tNet")
+        for key in budget_dict.keys():
+            print(f"{key[:8].ljust(8, " ")} \t${budget_dict[key]} \t{round(gross_ratios[key]*100, 2)}% \t{round(net_ratios[key]*100, 2)}%")
 
 
 if __name__ == "__main__":
     bgt = Budget(104000, state="GA")
     bgt.apply_budget(distribution)
+    bgt.gen_percents(distribution)
