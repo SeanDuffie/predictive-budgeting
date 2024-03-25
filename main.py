@@ -1,7 +1,15 @@
-# Set Up Loans
+from budget.budget import Budget
+from budget.income import Income
+from net_worth.loan import Loan
 
-# Set up income (branches?)
-# Calculate taxes and net income
+def enter_loans():
+    """ Set Up Loans """
+    pass
+
+def enter_income():
+    # Set up income (branches? to compare multiple incomes)
+    # Calculate taxes and net income
+    pass
 
 # Set up budget (branches?)
 # Get min debt payments from Loans
@@ -15,4 +23,5 @@
 # Ask if user wants to save to a database
 
 if __name__ == "__main__":
+    Loan()
     pass
