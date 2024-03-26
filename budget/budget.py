@@ -1,6 +1,11 @@
-"""_summary_
+""" @file budget.py
+    @author Sean Duffie
+    @brief Based on the user's yearly income, it calculates the portions to various expenses and savings
+    
+    TODO: 
+    FIXME: The budget should be calculated on a monthly basis, this would solve the problems of paying of the loans or filling the emergency fund
 """
-from income import Income
+from .income import Income
 
 distribution = {
     "Donations": 50,
@@ -10,7 +15,7 @@ distribution = {
     "Internet": 90,
     "Transportation": 80,
     "Food": 250,
-    "Debts (minimum)": 100,
+    "Debts (minimum)": 0,
     "HYSA (Emergency)": 2500,
     "Investments": 500,
     "Debts (extra)": 0,
@@ -32,6 +37,9 @@ class Budget():
         self.remaining = self.net
 
         self.distribution = self.generate_budget()
+
+    def add_minimum_payments(self, min_payment: float):
+        distribution["Debts (minimum)"] += min_payment
 
     def generate_budget(self):
         return distribution
@@ -106,7 +114,7 @@ class Budget():
         # if debug:
         print("\nExpense \tAmount \tGross \tNet")
         for key in budget_dict.keys():
-            print(f"{key[:8].ljust(8, " ")} \t${budget_dict[key]} \t{round(gross_ratios[key]*100, 2)}% \t{round(net_ratios[key]*100, 2)}%")
+            print(f"{key[:8].ljust(8, ' ')} \t${budget_dict[key]} \t{round(gross_ratios[key]*100, 2)}% \t{round(net_ratios[key]*100, 2)}%")
 
 
 if __name__ == "__main__":

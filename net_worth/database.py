@@ -294,11 +294,10 @@ if __name__ == "__main__":
 
     # Read data from old csv and populate table one row at a time (significantly slower)
     loan_table = [
-        ("Date", "text", ""),
-        ("Balance", "text", ""),
-        ("Light Intensity", "text", ""),
-        ("Temperature", "text", ""),
-        ("Humidity", "text", "")
+        ("Balance", "float", ""),
+        ("APR", "float", ""),
+        ("Start Date", "text", ""),
+        ("Term", "int", "")
     ]
     db.create_table("Loans", loan_table)
     # db.insert_row(t_name="palm", row=pd_row)

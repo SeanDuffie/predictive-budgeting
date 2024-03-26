@@ -51,7 +51,7 @@ class Transaction:
             next_date += self.interval
         print(f"{c-1} Payments Behind")
 
-        print(f"Next payment due on {next_date.strftime("%Y-%m-%d")}")
+        print(f"Next payment due on {next_date.strftime('%Y-%m-%d')}")
 
         return next_date
 
