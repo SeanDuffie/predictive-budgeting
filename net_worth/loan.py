@@ -9,7 +9,7 @@ import datetime
 
 import pandas as pd
 from dateutil.rrule import MONTHLY, rrule
-from helpers import calculate_term
+from .helpers import calculate_term
 
 
 class Loan():
