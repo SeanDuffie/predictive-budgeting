@@ -11,7 +11,7 @@
 """
 import os
 
-from flask import Flask, render_template
+from flask import Flask, flash, redirect, render_template, request, url_for
 
 RTDIR = os.path.dirname(__file__)
 app = Flask(
@@ -19,6 +19,7 @@ app = Flask(
     static_folder=f"{RTDIR}/web/static",
     template_folder=f"{RTDIR}/web/templates"
 )
+app.config['SECRET_KEY'] = '1d2e3382586f37723ba8aad13ece71d521e2b6fd1d0e7407'
 
 messages = [{'title': 'Message One',
              'content': 'Message One Content'},
@@ -32,6 +33,18 @@ def index():
 
 @app.route('/create/', methods=('GET', 'POST'))
 def create():
+    if request.method == 'POST':
+        title = request.form['title']
+        content = request.form['content']
+
+        if not title:
+            flash('Title is required!')
+        elif not content:
+            flash('Content is required!')
+        else:
+            messages.append({'title': title, 'content': content})
+            return redirect(url_for('index'))
+
     return render_template('create.html')
 
 if __name__ == "__main__":
