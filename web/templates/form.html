@@ -1,54 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <title>Budget Form</title>
-    </head>
+{% extends 'base.html' %}
 
-    <body>
-        <form>
-            <label for="age">Current Age:</label>
-            <input
-                type="number"
-                id="age"
-                name="age"
-                value=23 />
-            <br><br><br>
+{% block content %}
+    <h1>{% block title %} Messages {% endblock %}</h1>
+    {% for message in messages %}
+        <div class='message'>
+            <h3>{{ message['title'] }}</h3>
+            <p>{{ message['content'] }}</p>
+        </div>
+    {% endfor %}
 
-            <label for="income1">Gross Income:</label>
-            <input
-                type="number"
-                id="income1"
-                name="income1"
-                value=104000 />
-            <br>
+    <h1>Budget Form</h1>
+    <form>
+        <label for="age">Current Age:</label>
+        <input
+            type="number"
+            id="age"
+            name="age"
+            value=23 />
+        <br><br><br>
 
-            <label for="income1start">Start Date:</label>
-            <input
-                type="date"
-                id="income1start"
-                name="income1start"
-                value="2024-02-05" />
-            <br>
+        <label for="income1">Gross Income:</label>
+        <input
+            type="number"
+            id="income1"
+            name="income1"
+            value=104000 />
+        <br>
 
-            <label for="income1end">End Date:</label>
-            <input
-                type="date"
-                id="income1end"
-                name="income1end"
-                value="2065-05-25" />
-            <br><br><br>
+        <label for="income1start">Start Date:</label>
+        <input
+            type="date"
+            id="income1start"
+            name="income1start"
+            value="2024-02-05" />
+        <br>
 
-            <label for="expenses">Expense CSVs:</label>
-            <input type="file" id="expenses" name="expenses">
-            <br><br><br>
+        <label for="income1end">End Date:</label>
+        <input
+            type="date"
+            id="income1end"
+            name="income1end"
+            value="2065-05-25" />
+        <br><br><br>
 
-            <label for="savings">Savings:</label>
-            <input type="number" id="savings" name="savings">
-            <br><br>
+        <label for="expenses">Expense CSVs:</label>
+        <input type="file" id="expenses" name="expenses">
+        <br><br><br>
 
-            <label for="invest">Investments:</label>
-            <input type="number" id="invest" name="invest">
-            <br><br>
-        </form>
-    </body>
-</html>
+        <label for="savings">Savings:</label>
+        <input type="number" id="savings" name="savings">
+        <br><br>
+
+        <label for="invest">Investments:</label>
+        <input type="number" id="invest" name="invest">
+        <br><br>
+    </form>
+{% endblock %}
