@@ -63,7 +63,7 @@ if __name__ == "__main__":
     )
 
     # Project into the future
-    TL3 = datetime.date(2026, 1, 1)
+    TL3 = datetime.date(2034, 1, 1)
     portfolio.update_all(TL3)
     portfolio.calculate_net(TL3)
     portfolio.calculate_ratio(TL3)
@@ -81,26 +81,56 @@ if __name__ == "__main__":
 
     import bokeh.embed
     import bokeh.plotting
+    from bokeh.io import curdoc
+    from bokeh.models import ColumnDataSource, DatetimeTickFormatter, Select, NumeralTickFormatter
+    from math import radians
+    import numpy as np
+
     import pandas as pd
 
     RTDIR = os.path.dirname(__file__)
 
     # create a pandas dataframe
-    # df = pd.DataFrame({'date': pd.to_datetime(['2023-01-01', '2023-01-02', '2023-01-03']), 'value': [1, 2, 3]})
-    df = portfolio.loans["Student Loan #1"].plan
-    df["Date"] = pd.to_datetime(df["Date"])
+    df1 = portfolio.loans["Student Loan #1"].plan
+    df1["Date"] = pd.to_datetime(df1["Date"])
+
+    df2 = portfolio.savings["American Express HYSA"].history
+    df2["Date"] = pd.to_datetime(df2["Date"])
+
+    curdoc().theme = 'night_sky'
 
     # create a Bokeh figure
-    p = bokeh.plotting.figure(title="Loan Change", x_axis_label='Date', y_axis_label='Amount')
+    # p = bokeh.plotting.figure(title="Loan Change", x_axis_label='Date', y_axis_label='Amount')
+    p = bokeh.plotting.figure(
+        title="Loan Change",
+        x_axis_label='Date (years)',
+        x_axis_type='datetime',
+        y_axis_label='Amount',
+        y_axis_type='linear',
+        width=1200,
+        height=600
+    )
 
     # add a line renderer to the figure
-    p.line(x=df['Date'], y=df['Balance Remaining'], line_width=2)
-    p.line(x=df['Date'], y=df['Applied to Principal'], line_width=2)
-    p.line(x=df['Date'], y=df['Applied to Interest'], line_width=2)
-    p.line(x=df['Date'], y=df['Total Interest'], line_width=2)
+    p.line(x=df1['Date'], y=df1['Balance Remaining'], line_width=2, line_color='blue')
+    p.line(x=df1['Date'], y=df1['Total Interest'], line_width=2, line_color='red')
+
+    # add a line renderer to the figure
+    p.line(x=df2['Date'], y=df2['Balance'], line_width=2, line_color='green')
+    
+    
+    # Format graph
+    date_pattern = ["%Y-%m-%d"]
+    p.xaxis.formatter = DatetimeTickFormatter(
+        days = date_pattern,
+        months = date_pattern,
+        years = date_pattern
+    )
+    p.xaxis.major_label_orientation=radians(80)
+    p.yaxis.formatter = NumeralTickFormatter(format="$0,0.00")
 
     # bokeh.plotting.output_file()
-    bokeh.plotting.save(p, filename=f"{RTDIR}/Loans.html")
+    bokeh.plotting.save(p, filename=f"{RTDIR}/NetWorth.html", title="Net Worth Projection")
 
     html = bokeh.embed.file_html(p)
     # print(f"{html=}\n\n\n")
@@ -109,27 +139,4 @@ if __name__ == "__main__":
     # print(f"{json=}")
 
     # show the figure
-    # bokeh.plotting.show(p)
-
-    df = portfolio.savings["American Express HYSA"].history
-    df["Date"] = pd.to_datetime(df["Date"])
-
-    # create a Bokeh figure
-    p = bokeh.plotting.figure(title="Savings Change", x_axis_label='Date', y_axis_label='Amount')
-
-    # add a line renderer to the figure
-    p.line(x=df['Date'], y=df['Balance'], line_width=2)
-    p.line(x=df['Date'], y=df['Change'], line_width=2)
-
-    # bokeh.plotting.output_file()
-    bokeh.plotting.save(p, filename=f"{RTDIR}/Savings.html")
-
-    html = bokeh.embed.file_html(p)
-    # print(f"{html=}\n\n\n")
-
-    # json = bokeh.embed.json_item(p)
-    # print(f"{json=}")
-
-    # show the figure
-    # bokeh.plotting.show(p)
-
+    bokeh.plotting.show(p)

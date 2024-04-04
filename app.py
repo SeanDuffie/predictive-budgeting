@@ -12,6 +12,7 @@
 import os
 
 from flask import Flask, flash, redirect, render_template, request, url_for
+from portfolio import Portfolio
 
 RTDIR = os.path.dirname(__file__)
 app = Flask(
@@ -20,6 +21,8 @@ app = Flask(
     template_folder=f"{RTDIR}/web/templates"
 )
 app.config['SECRET_KEY'] = '1d2e3382586f37723ba8aad13ece71d521e2b6fd1d0e7407'
+
+portfolio = Portfolio("net_worth.db")
 
 messages = [{'title': 'Message One',
              'content': 'Message One Content'},
