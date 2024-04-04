@@ -3,6 +3,7 @@
 import datetime
 
 from dateutil.relativedelta import relativedelta
+import pandas as pd
 
 
 class Savings:
@@ -13,7 +14,21 @@ class Savings:
         self.recur = (recur, start, interval)
         self.mpr = apr / 12
 
-        self.history = [(self.balance, deposit, start, "Initial deposit")]
+        self.history = pd.DataFrame(
+            columns = [
+                "Date",
+                "Balance",
+                "Change",
+                "Description"
+            ],
+            data = [[
+                start,
+                self.balance,
+                deposit,
+                "Initial deposit"
+            ]]
+        )
+
         self.last_update = start
         self.interval = relativedelta(months=1)
 
@@ -27,12 +42,24 @@ class Savings:
 
         while self.last_update < day:
             if self.recur is not None:
+                # Apply recurring deposit
                 self.balance += self.recur[0]
-                self.history.append((self.balance, self.recur[0], self.last_update, "Recurring Deposit"))
+                self.history.loc[len(self.history)] = [
+                    self.last_update,
+                    self.balance,
+                    self.recur[0],
+                    "Recurring Deposit"
+                ]
 
+            # Apply Interest
             interest = self.balance * (self.mpr)
             self.balance += interest
-            self.history.append((self.balance, interest, self.last_update, "Interest Applied"))
+            self.history.loc[len(self.history)] = [
+                self.last_update,
+                self.balance,
+                interest,
+                "Interest Applied"
+            ]
 
             self.last_update += self.interval
 
