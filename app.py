@@ -11,8 +11,12 @@
 """
 import os
 
+import bokeh.embed
+import bokeh.plotting
+import pandas as pd
 from flask import Flask, flash, redirect, render_template, request, url_for
-from portfolio import Portfolio
+
+# from portfolio import Portfolio
 
 RTDIR = os.path.dirname(__file__)
 app = Flask(
@@ -22,7 +26,8 @@ app = Flask(
 )
 app.config['SECRET_KEY'] = '1d2e3382586f37723ba8aad13ece71d521e2b6fd1d0e7407'
 
-portfolio = Portfolio("net_worth.db")
+# portfolio = Portfolio("net_worth.db")
+df = pd.DataFrame({'date': pd.to_datetime(['2023-01-01', '2023-01-02', '2023-01-03']), 'value': [1, 2, 3]})
 
 messages = [{'title': 'Message One',
              'content': 'Message One Content'},
@@ -32,7 +37,19 @@ messages = [{'title': 'Message One',
 
 @app.route("/")
 def index():
-    return render_template("form.html", messages=messages)
+    # TODO: Finish this: https://stackoverflow.com/questions/74286136/how-do-i-embed-a-bokeh-interactive-plot-in-a-flask-application
+    # TODO: https://docs.bokeh.org/en/dev-3.0/docs/user_guide/embed.html
+    p = bokeh.plotting.figure(title="Value")
+    p.line(x=df['date'], y=df['value'], line_width=2)
+    chart = bokeh.embed.file_html(p)
+    
+    empty_boxplot = bokeh.plotting.figure(
+                plot_width=500,
+                plot_height=450
+            )
+    script, div = bokeh.embed.components(empty_boxplot)
+    
+    return render_template("form.html", messages=messages, script=script, div=div)
 
 @app.route('/create/', methods=('GET', 'POST'))
 def create():

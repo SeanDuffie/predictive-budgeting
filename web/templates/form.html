@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    <!-- TODO -->
+    {{ script | safe }}
     <h1>{% block title %} Messages {% endblock %}</h1>
     {% for message in messages %}
         <div class='message'>
@@ -54,5 +56,11 @@
         <label for="invest">Investments:</label>
         <input type="number" id="invest" name="invest">
         <br><br>
+
+        <!-- TODO -->
+        <div class="plot">
+            {{ div | safe }}
+        </div>
+        
     </form>
 {% endblock %}
