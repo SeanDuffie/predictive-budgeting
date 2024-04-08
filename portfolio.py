@@ -270,8 +270,6 @@ class Portfolio():
         Returns:
             pd.DataFrame: projection of portfolio over time TODO: replace this with a single float or a tuple
         """
-        self.update_all(date)
-        
         # Keep track of all events in the plan, this will be used for any plots 
         timeline = pd.DataFrame(
             columns=[
@@ -285,42 +283,43 @@ class Portfolio():
             ]
         )
 
-        # TODO: Loop throught each "update" function until reaching the current date
+        # Loop throught each "update" function until reaching the current date
         schedule = rrule(freq=MONTHLY, count=calculate_term(self.start, self.end), dtstart=self.start)
-        # TODO: Each Update function should calculate interest and recurring changes
-        # TODO: Call the current value function for each item
-        # Generate a Dataframe of Net Worth over time
-        for date in schedule:
-            gross = 0
-            debt = 0
-            savings = 0
-            invest = 0
-            assets = 0
-            for sav in self.savings.values():
-                cur_sav = sav.get_balance(date)
-                gross += cur_sav
-                savings += cur_sav
-            for inv in self.investments.values():
-                cur_inv = inv.get_balance(date)
-                gross += cur_inv
-                invest += cur_inv
-            for ast in self.assets.values():
-                cur_ast = ast.get_value(date)
-                gross += cur_ast
-                assets += cur_ast
-            for dbt in self.loans.values():
-                debt += dbt.get_balance(date)
+        self.update_all(date)
 
-            # Append changes to timeline
-            timeline.loc[len(timeline)] = [
-                date,
-                gross-debt,
-                gross,
-                debt,
-                savings,
-                invest,
-                assets
-            ]
+        # Generate a Dataframe of Net Worth over time
+        for cycle in schedule:
+            if cycle.date() < date:
+                gross = 0
+                debt = 0
+                savings = 0
+                invest = 0
+                assets = 0
+                for sav in self.savings.values():
+                    cur_sav = sav.get_balance(cycle)
+                    gross += cur_sav
+                    savings += cur_sav
+                for inv in self.investments.values():
+                    cur_inv = inv.get_balance(cycle)
+                    gross += cur_inv
+                    invest += cur_inv
+                for ast in self.assets.values():
+                    cur_ast = ast.get_value(cycle)
+                    gross += cur_ast
+                    assets += cur_ast
+                for dbt in self.loans.values():
+                    debt += dbt.get_balance(cycle)
+
+                # Append changes to timeline
+                timeline.loc[len(timeline)] = [
+                    cycle,
+                    gross-debt,
+                    gross,
+                    debt,
+                    savings,
+                    invest,
+                    assets
+                ]
 
         timeline["Date"] = pd.to_datetime(timeline["Date"])
         timeline.to_csv(path_or_buf="./timeline.csv")

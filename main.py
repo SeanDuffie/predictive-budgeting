@@ -94,37 +94,20 @@ if __name__ == "__main__":
     # Project into the future
     TL3 = datetime.date(2034, 1, 1)
     portfolio.update_all(TL3)
-    portfolio.calculate_net(TL3)
-    portfolio.calculate_ratio(TL3)
-
-    # print("\nHYSA history:")
-    # for event in portfolio.savings["American Express HYSA"].history.iterrows():
-    #     print(f"\t{event}")
-
-    # print("\nETRADE history:")
-    # for event in portfolio.savings["Stocks"].history.iterrows():
-    #     print(f"\t{event}")
+    # portfolio.calculate_net(TL3)
+    # portfolio.calculate_ratio(TL3)
 
     # Ask if user wants to save to a database
     import os
+    from math import radians
 
     import bokeh.embed
     import bokeh.plotting
     from bokeh.io import curdoc
-    from bokeh.models import ColumnDataSource, DatetimeTickFormatter, Select, NumeralTickFormatter
-    from math import radians
-    import numpy as np
-
-    import pandas as pd
+    from bokeh.models import (ColumnDataSource, DatetimeTickFormatter,
+                              NumeralTickFormatter, Select)
 
     RTDIR = os.path.dirname(__file__)
-
-    # create a pandas dataframe
-    # df1 = portfolio.loans["Student Loan #1"].plan
-    # df1["Date"] = pd.to_datetime(df1["Date"])
-
-    # df2 = portfolio.savings["American Express HYSA"].history
-    # df2["Date"] = pd.to_datetime(df2["Date"])
 
     retirement = datetime.date(2067, 5, 1)
     df = portfolio.project_net(retirement)
@@ -167,13 +150,10 @@ if __name__ == "__main__":
     p.yaxis.formatter = NumeralTickFormatter(format="$0,0.00")
 
     # bokeh.plotting.output_file()
-    bokeh.plotting.save(p, filename=f"{RTDIR}/NetWorth.html", title="Net Worth Projection")
+    bokeh.plotting.output_file("NetWorth.html")
+    bokeh.plotting.save(p, filename=f"{RTDIR}/Networth.html", title="Net Worth Projection")
 
     html = bokeh.embed.file_html(p)
-    # print(f"{html=}\n\n\n")
-
-    # json = bokeh.embed.json_item(p)
-    # print(f"{json=}")
 
     # show the figure
     bokeh.plotting.show(p)
