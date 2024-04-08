@@ -39,16 +39,25 @@ messages = [{'title': 'Message One',
 def index():
     # TODO: Finish this: https://stackoverflow.com/questions/74286136/how-do-i-embed-a-bokeh-interactive-plot-in-a-flask-application
     # TODO: https://docs.bokeh.org/en/dev-3.0/docs/user_guide/embed.html
-    p = bokeh.plotting.figure(title="Value")
-    p.line(x=df['date'], y=df['value'], line_width=2)
-    chart = bokeh.embed.file_html(p)
-    
-    empty_boxplot = bokeh.plotting.figure(
-                plot_width=500,
-                plot_height=450
-            )
-    script, div = bokeh.embed.components(empty_boxplot)
-    
+    # p = bokeh.plotting.figure(title="Value")
+    # p.line(x=df['date'], y=df['value'], line_width=2)
+    # chart = bokeh.embed.file_html(p)
+
+    # empty_boxplot = bokeh.plotting.figure(
+    #             plot_width=500,
+    #             plot_height=450
+    #         )
+    # script, div = bokeh.embed.components(empty_boxplot)
+    from bokeh.plotting import figure
+    from bokeh.embed import components
+
+    plot = figure()
+    plot.circle([1,2], [3,4])
+
+    script, div = components(plot)
+    # print(script)
+    # print(div)
+
     return render_template("form.html", messages=messages, script=script, div=div)
 
 @app.route('/create/', methods=('GET', 'POST'))
