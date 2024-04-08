@@ -85,7 +85,7 @@ class Loan():
             monthly_payment = (self.loan_amount * self.mpr) / (1 - (1 + self.mpr) ** - amended_term)
             # print(f"Using amended term of {term_left} months with a minimum payment of ${monthly_payment}")
 
-        headers = ["Date", "Balance Remaining", "Payment", "Applied to Principal", "Applied to Interest", "Total Interest"]
+        headers = ["Date", "Balance", "Payment", "Principal", "Interest", "Total Interest"]
         payments = [[self.schedule[0], self.principal, 0, 0, 0, 0]]
         total_interest = 0
         balance = self.principal
@@ -146,13 +146,16 @@ class Loan():
         TODO: Separate payments into timeframes. Ex) You expect a pay raise in the future and can increase your payment amount
 
         Args:
-            date (datetime.datetime): date of the requested payment
+            date (datetime.date): date of the requested payment
 
         Returns:
             float: The remaining balance at this stage in the payment plan
         """
         date1 = datetime.datetime(date.year, date.month, 1)
-        date2 = datetime.datetime(date.year, date.month + 1, 1)
+        if date1.month == 12:
+            date2 = datetime.datetime(date.year+1, 1, 1)
+        else:
+            date2 = datetime.datetime(date.year, date.month + 1, 1)
         if date1 < self.plan["Date"].get(0):
             # print("Too Early")
             amount = 0
@@ -165,7 +168,7 @@ class Loan():
                                 & (self.plan["Date"] < date2)].reset_index()
 
             # Extract the balance amount from the table row
-            amount = result["Balance Remaining"].get(0)
+            amount = result["Balance"].get(0)
 
         # FIXME: Temporary error handling for calling a loan that hasn't been initialized yet
         if amount is None:

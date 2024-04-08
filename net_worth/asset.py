@@ -4,6 +4,7 @@
 """
 import datetime
 
+import pandas as pd
 from dateutil.relativedelta import relativedelta
 
 
@@ -20,7 +21,22 @@ class Asset:
         self.value = init_value
         self.expected_mpr = expected_apr / 12
 
-        self.history = [(self.value, init_value, start, "Started tracking asset")]
+        self.history = pd.DataFrame(
+            columns = [
+                "Date",
+                "Balance",
+                "Change",
+                "Description"
+            ],
+            data = [[
+                start,
+                self.value,
+                init_value,
+                "Started tracking asset"
+            ]]
+        )
+        self.history["Date"] = pd.to_datetime(self.history["Date"])
+
         self.last_update = start
         self.interval = relativedelta(months=1)
 
@@ -35,9 +51,16 @@ class Asset:
         while self.last_update < day:
             interest = self.value * (self.expected_mpr)
             self.value += interest
-            self.history.append((self.value, interest, self.last_update, "Preciation Applied"))
+            self.history.loc[len(self.history)] = [
+                self.last_update,
+                self.value,
+                interest,
+                "Preciation Applied"
+            ]
 
             self.last_update += self.interval
+
+        self.history["Date"] = pd.to_datetime(self.history["Date"])
 
     def modify_value(self, amount: float, day: datetime.date = None, note: str = "Modified value"):
         """ Use this if there are changes that affect the value of the Asset
@@ -55,14 +78,48 @@ class Asset:
             day = datetime.date.today()
 
         self.value += amount
-        self.history.append((self.value, amount, day, note))
-        
-    def get_value(self, day: datetime.date):
-        # if day < self.history["Date"].get(0):
-        if day < self.history[0][2]:
-            return 0
+        self.history.loc[len(self.history)] = [
+            day,
+            self.value,
+            amount,
+            note
+        ]
+        self.history["Date"] = pd.to_datetime(self.history["Date"])
+
+    def get_value(self, date: datetime.date):
+        """ Gets the value on a specified date
+
+        Args:
+            date (datetime.date): Day being queried for value
+
+        Returns:
+            float: Value of asset on given day
+        """
+        date1 = datetime.datetime(date.year, date.month, 1)
+        if date1.month == 12:
+            date2 = datetime.datetime(date.year+1, 1, 1)
         else:
-            return self.value
+            date2 = datetime.datetime(date.year, date.month + 1, 1)
+        if date1 < self.history["Date"].get(0):
+            # print("Too Early")
+            amount = 0
+        elif date1 > self.history["Date"].get(self.history["Date"].size - 1):
+            # print("Too Late")
+            amount = 0
+        else:
+            # Find the row of the Amortization table for the requested date
+            result = self.history.loc[(self.history["Date"] >= date1)
+                                & (self.history["Date"] < date2)].reset_index()
+
+            # Extract the balance amount from the table row
+            amount = result["Balance"].get(0)
+
+        # FIXME: Temporary error handling for calling a loan that hasn't been initialized yet
+        if amount is None:
+            print("This should never be printed")
+            amount = 0
+
+        return amount
 
 if __name__ == "__main__":
     purchase_date = datetime.date(2025, 1, 1)

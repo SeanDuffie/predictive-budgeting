@@ -4,13 +4,14 @@ import datetime
 
 import pandas as pd
 
-from net_worth import Asset, Database, Loan, Savings
+from net_worth import Asset, Database, Loan, Savings, calculate_term
+from dateutil.rrule import MONTHLY, rrule
 
 
 class Portfolio():
     """ This class is intended to help measure the overall net worth of my assets
     """
-    def __init__(self, db_name: str):
+    def __init__(self, db_name: str, start: datetime.date = None, end: datetime.date = None, age: int = 23):
         # Load up database
         # self.db = Database(db_name=db_name)
 
@@ -19,6 +20,15 @@ class Portfolio():
         self.assets: dict[str, Asset] = {}
         self.investments: dict[str, Savings] = {}
         self.savings: dict[str, Savings] = {}
+
+        if start is None:
+            start = datetime.date.today()
+        if end is None:
+            working_years = (67 - age)
+            end = datetime.date(year=start.year + working_years, month=1, day=1)
+
+        self.start = start
+        self.end = end
 
     def add_loan(self, amount: float, apr: float, start: datetime.date, end: datetime.date, name: str):
         """ Add a debt to your portfolio
@@ -38,6 +48,12 @@ class Portfolio():
             term=end
         )
         self.loans[name] = new_loan
+
+        if start < self.start:
+            self.start = start
+
+        if end > self.end:
+            self.end = end
 
     def remove_loan(self):
         # Preview loans to identify which to delete
@@ -77,6 +93,9 @@ class Portfolio():
         )
         self.assets[name] = new_asset
 
+        if self.start == None or start < self.start:
+            self.start = start
+
     def remove_asset(self):
         # Preview savings to identify which to delete
         print("Previewing Options:")
@@ -91,9 +110,13 @@ class Portfolio():
         # Remove the loan
         self.assets.pop(index)
 
-    def add_investment(self):
+    def add_investment(self, deposit: float, start: datetime.date, apr: float, recur: float = 0, name: str = "Investments"):
         # Prompt for additional investments
-        pass
+        new_sav = Savings(deposit=deposit, start=start, apr=apr, recur=recur)
+        self.investments[name] = new_sav
+
+        if self.start == None or start < self.start:
+            self.start = start
 
     def remove_investment(self):
         # Preview savings to identify which to delete
@@ -123,6 +146,9 @@ class Portfolio():
         new_sav = Savings(deposit=deposit, start=start, apr=apr, recur=recur)
         self.savings[name] = new_sav
 
+        if self.start == None or start < self.start:
+            self.start = start
+
     def remove_savings(self):
         # Preview savings to identify which to delete
         print("Previewing Options:")
@@ -137,18 +163,23 @@ class Portfolio():
         # Remove the loan
         self.savings.pop(index)
 
-    def update_all(self, day):
-        print("Updating Savings")
+    def update_all(self, date):
+        # print("Updating Savings")
         for key, val in self.savings.items():
-            val.update(day)
-            print(f"\t{key}: {val.balance}")
+            val.update(date)
+            # print(f"\t{key}: {val.balance}")
 
-        print("Updating Assets")
+        # print("Updating Investments")
+        for key, val in self.investments.items():
+            val.update(date)
+            # print(f"\t{key}: {val.value}")
+
+        # print("Updating Assets")
         for key, val in self.assets.items():
-            val.update(day)
-            print(f"\t{key}: {val.value}")
+            val.update(date)
+            # print(f"\t{key}: {val.value}")
 
-    def calculate_gross(self):
+    def calculate_gross(self, date: datetime.date):
         """ Sums together the values of all portfolio
 
         TODO: integrate timeline, take date as parameter
@@ -159,23 +190,23 @@ class Portfolio():
         # Add value of all Savings
         savings = 0
         for sav in self.savings.values():
-            savings += sav.balance
+            savings += sav.get_balance(date)
 
         # Add value of all Investments
         invest = 0
         for inv in self.investments.values():
-            savings += inv.balance
+            savings += inv.get_balance(date)
 
         # Add value of all Assets
         assets = 0
         for ast in self.assets.values():
-            assets += ast.value
+            assets += ast.get_value(date)
 
         gross = savings + invest + assets
 
         return gross
 
-    def calculate_debts(self, day: datetime.date):
+    def calculate_debts(self, date: datetime.date):
         """ Sum together the current value of all debts
 
         TODO: integrate timeline, take date as parameter
@@ -187,19 +218,19 @@ class Portfolio():
         loans = 0
         for loan in self.loans.values():
             # loans += loan.get_balance(datetime.date.today())
-            loans += loan.get_balance(day)
+            loans += loan.get_balance(date)
 
         return loans
 
-    def calculate_net(self, day: datetime.date):
+    def calculate_net(self, date: datetime.date):
         """ Calculate the net worth
 
         Returns:
             float: Net Worth
         """
         print(f"{len(self.savings)} Savings | {len(self.investments)} Investments | {len(self.assets)} Assets | {len(self.loans)} Loans")
-        gross = self.calculate_gross()
-        debts = self.calculate_debts(day)
+        gross = self.calculate_gross(date)
+        debts = self.calculate_debts(date)
 
         total = gross - debts
 
@@ -207,7 +238,7 @@ class Portfolio():
 
         return total
 
-    def calculate_ratio(self, day: datetime.date):
+    def calculate_ratio(self, date: datetime.date):
         """ Calculate the ratio of assets compared to debts
 
         FIXME: I think I did this wrong, should it be more of a budget thing than a portfolio?
@@ -215,16 +246,19 @@ class Portfolio():
         Returns:
             float: Ratio of debts to assets. 0 is even, negative is in debt, positive is best
         """
-        gross = self.calculate_gross()
-        debts = self.calculate_debts(day)
+        gross = self.calculate_gross(date)
+        debts = self.calculate_debts(date)
 
-        ratio = (gross - debts) / (gross + debts)
+        try:
+            ratio = (gross - debts) / (gross + debts)
+        except ZeroDivisionError:
+            ratio = 0
 
         print(f"Debt to Income Ratio: {ratio}")
 
         return ratio
 
-    def project_net(self, day: datetime.date) -> pd.DataFrame:
+    def project_net(self, date: datetime.date) -> pd.DataFrame:
         """ Projects net worth over a period of time
 
         FIXME: I think this needs to be an individual function, not a dataframe
@@ -236,17 +270,61 @@ class Portfolio():
         Returns:
             pd.DataFrame: projection of portfolio over time TODO: replace this with a single float or a tuple
         """
+        self.update_all(date)
+        
+        # Keep track of all events in the plan, this will be used for any plots 
+        timeline = pd.DataFrame(
+            columns=[
+                "Date",
+                "Net",
+                "Gross",
+                "Debt",
+                "Savings",
+                "Investments",
+                "Assets"
+            ]
+        )
+
         # TODO: Loop throught each "update" function until reaching the current date
+        schedule = rrule(freq=MONTHLY, count=calculate_term(self.start, self.end), dtstart=self.start)
         # TODO: Each Update function should calculate interest and recurring changes
         # TODO: Call the current value function for each item
         # Generate a Dataframe of Net Worth over time
+        for date in schedule:
+            gross = 0
+            debt = 0
+            savings = 0
+            invest = 0
+            assets = 0
+            for sav in self.savings.values():
+                cur_sav = sav.get_balance(date)
+                gross += cur_sav
+                savings += cur_sav
+            for inv in self.investments.values():
+                cur_inv = inv.get_balance(date)
+                gross += cur_inv
+                invest += cur_inv
+            for ast in self.assets.values():
+                cur_ast = ast.get_value(date)
+                gross += cur_ast
+                assets += cur_ast
+            for dbt in self.loans.values():
+                debt += dbt.get_balance(date)
 
-        s = datetime.datetime(2024, 3, 31)
-        t = datetime.timedelta(1)
-        e = s + t
-        print(e)
+            # Append changes to timeline
+            timeline.loc[len(timeline)] = [
+                date,
+                gross-debt,
+                gross,
+                debt,
+                savings,
+                invest,
+                assets
+            ]
 
-        return pd.DataFrame()
+        timeline["Date"] = pd.to_datetime(timeline["Date"])
+        timeline.to_csv(path_or_buf="./timeline.csv")
+        return timeline
 
 if __name__ == "__main__":
     portfolio = Portfolio("net_worth.db")
@@ -271,16 +349,16 @@ if __name__ == "__main__":
 
     # Student Loans 1
     portfolio.add_loan(
-        start=datetime.datetime(2024, 3, 5),
-        end=datetime.datetime(2033, 9, 5),
+        start=datetime.date(2024, 3, 5),
+        end=datetime.date(2033, 9, 5),
         amount=5677.25,
         apr=.025,
         name="Student Loan #1"
     )
 
     portfolio.add_loan(
-        start=datetime.datetime(2024, 3, 5),
-        end=datetime.datetime(2033, 9, 5),
+        start=datetime.date(2024, 3, 5),
+        end=datetime.date(2033, 9, 5),
         amount=4777.83,
         apr=.0348,
         name="Student Loan #2"

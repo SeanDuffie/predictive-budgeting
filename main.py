@@ -10,12 +10,12 @@ from portfolio import Portfolio
 if __name__ == "__main__":
     # Launch portfolio (this shouldn't need branches, since each will be paired with a budget)
     # Generate graphs for projections into the future
-    portfolio = Portfolio("net_worth.db")
+    portfolio = Portfolio("net_worth.db", start=datetime.date(2024, 1, 1))
 
     # Student Loans 1
     portfolio.add_loan(
-        start=datetime.datetime(2024, 3, 5),
-        end=datetime.datetime(2033, 9, 5),
+        start=datetime.date(2024, 3, 5),
+        end=datetime.date(2033, 9, 5),
         amount=5677.25,
         apr=.025,
         name="Student Loan #1"
@@ -23,8 +23,8 @@ if __name__ == "__main__":
 
     # Student Loans 2
     portfolio.add_loan(
-        start=datetime.datetime(2024, 3, 5),
-        end=datetime.datetime(2033, 9, 5),
+        start=datetime.date(2024, 3, 5),
+        end=datetime.date(2033, 9, 5),
         amount=4777.83,
         apr=.0348,
         name="Student Loan #2"
@@ -48,18 +48,47 @@ if __name__ == "__main__":
     portfolio.add_savings(
         deposit=10000,
         start=datetime.date(2024, 3, 5),
-        apr=0.0435,
+        # apr=0.0435,
+        apr=0.1,
         recur=new_budget["HYSA (Emergency)"],
         name="American Express HYSA"
     )
 
     # Stock Portfolio
-    portfolio.add_savings(
+    portfolio.add_investment(
         deposit=10000,
         start=datetime.date(2024, 3, 5),
-        apr=0.07,
+        apr=0.1,
         recur=new_budget["Investments"],
         name="Stocks"
+    )
+
+    # Home cost is an Asset
+    HOME_VAL = 330000
+    PURCHASE_DATE = datetime.date(2025, 3, 1)
+    portfolio.update_all(PURCHASE_DATE)
+    portfolio.add_asset(
+        init_value=HOME_VAL,
+        start=PURCHASE_DATE,
+        apr=0.08,
+        name="House"
+    )
+
+    # Down payment is subtracted from savings
+    DOWN_PAYMENT = HOME_VAL * 0.1
+    portfolio.savings["American Express HYSA"].modify_balance(-DOWN_PAYMENT, PURCHASE_DATE, "Placed down payment on house")
+
+    # Mortgage is home cost minus down payment
+    MORT = HOME_VAL - DOWN_PAYMENT
+    # MORT_DATE = PURCHASE_DATE + datetime.timedelta(3650)
+    MORT_DATE = PURCHASE_DATE + datetime.timedelta(5475)
+    MORT_TERM = 120
+    portfolio.add_loan(
+        start=PURCHASE_DATE,
+        end=MORT_DATE,
+        amount=MORT,
+        apr=.06,
+        name="Mortgage"
     )
 
     # Project into the future
@@ -91,11 +120,14 @@ if __name__ == "__main__":
     RTDIR = os.path.dirname(__file__)
 
     # create a pandas dataframe
-    df1 = portfolio.loans["Student Loan #1"].plan
-    df1["Date"] = pd.to_datetime(df1["Date"])
+    # df1 = portfolio.loans["Student Loan #1"].plan
+    # df1["Date"] = pd.to_datetime(df1["Date"])
 
-    df2 = portfolio.savings["American Express HYSA"].history
-    df2["Date"] = pd.to_datetime(df2["Date"])
+    # df2 = portfolio.savings["American Express HYSA"].history
+    # df2["Date"] = pd.to_datetime(df2["Date"])
+
+    retirement = datetime.date(2067, 5, 1)
+    df = portfolio.project_net(retirement)
 
     curdoc().theme = 'night_sky'
 
@@ -111,14 +143,14 @@ if __name__ == "__main__":
         height=600
     )
 
-    # add a line renderer to the figure
-    p.line(x=df1['Date'], y=df1['Balance Remaining'], line_width=2, line_color='blue')
-    p.line(x=df1['Date'], y=df1['Total Interest'], line_width=2, line_color='red')
+    # Add a line renderer to the figure
+    p.line(x=df['Date'], y=df['Net'], line_width=2, line_color='green')
+    p.line(x=df['Date'], y=df['Gross'], line_width=2, line_color='lime')
+    p.line(x=df['Date'], y=df['Debt'], line_width=2, line_color='red')
+    p.line(x=df['Date'], y=df['Savings'], line_width=2, line_color='yellow')
+    p.line(x=df['Date'], y=df['Investments'], line_width=2, line_color='purple')
+    p.line(x=df['Date'], y=df['Assets'], line_width=2, line_color='pink')
 
-    # add a line renderer to the figure
-    p.line(x=df2['Date'], y=df2['Balance'], line_width=2, line_color='green')
-    
-    
     # Format graph
     date_pattern = ["%Y-%m-%d"]
     p.xaxis.formatter = DatetimeTickFormatter(

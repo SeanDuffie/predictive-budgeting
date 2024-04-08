@@ -18,16 +18,19 @@ class Savings:
             columns = [
                 "Date",
                 "Balance",
-                "Change",
+                "Deposit",
+                "Interest",
                 "Description"
             ],
             data = [[
                 start,
                 self.balance,
                 deposit,
+                0,
                 "Initial deposit"
             ]]
         )
+        self.history["Date"] = pd.to_datetime(self.history["Date"])
 
         self.last_update = start
         self.interval = relativedelta(months=1)
@@ -44,24 +47,23 @@ class Savings:
             if self.recur is not None:
                 # Apply recurring deposit
                 self.balance += self.recur[0]
+
+                # Apply Interest TODO: put this before or after deposit?
+                interest = self.balance * (self.mpr)
+                self.balance += interest
+
+                # Append changes to history
                 self.history.loc[len(self.history)] = [
                     self.last_update,
                     self.balance,
                     self.recur[0],
-                    "Recurring Deposit"
+                    interest,
+                    "Recurring Deposit + Interest"
                 ]
 
-            # Apply Interest
-            interest = self.balance * (self.mpr)
-            self.balance += interest
-            self.history.loc[len(self.history)] = [
-                self.last_update,
-                self.balance,
-                interest,
-                "Interest Applied"
-            ]
-
             self.last_update += self.interval
+
+        self.history["Date"] = pd.to_datetime(self.history["Date"])
 
     def update_recurring(self, amount: float, start: datetime.date = None, interval: int = 1):
         """ Update the recurring deposits going to this account
@@ -76,18 +78,60 @@ class Savings:
 
         self.recur = (amount, start, interval)
 
-    def modify_balance(self, amount: float, day: datetime.date = None, note: str = "Modified balance"):
+    def modify_balance(self, amount: float, date: datetime.date = None, note: str = "Modified balance"):
         """ Use this if there are big withdrawls or deposits outside of the plan
 
         Args:
             amount (float): Amount to modify balance by (positive if deposit, negative if withdrawl)
             note (str): String describing reason for modification. Will be stored in history.
         """
-        if day is None:
-            day = datetime.date.today()
+        if date is None:
+            date = datetime.date.today()
 
         self.balance += amount
-        self.history.append((self.balance, amount, day, note))
+        # Append changes to history
+        self.history.loc[len(self.history)] = [
+            date,
+            self.balance,
+            amount,
+            0,
+            note
+        ]
+
+    def get_balance(self, date: datetime.date):
+        """ Gets the balance of the account on a given day
+
+        Args:
+            date (datetime.date): Month of the expected transaction
+
+        Returns:
+            float: Amount in the balance
+        """
+        date1 = datetime.datetime(date.year, date.month, 1)
+        if date1.month == 12:
+            date2 = datetime.datetime(date.year+1, 1, 1)
+        else:
+            date2 = datetime.datetime(date.year, date.month + 1, 1)
+        if date1 < self.history["Date"].get(0):
+            # print("Too Early")
+            amount = 0
+        elif date1 > self.history["Date"].get(self.history["Date"].size - 1):
+            # print("Too Late")
+            amount = 0
+        else:
+            # Find the row of the Amortization table for the requested date
+            result = self.history.loc[(self.history["Date"] >= date1)
+                                & (self.history["Date"] < date2)].reset_index()
+
+            # Extract the balance amount from the table row
+            amount = result["Balance"].get(0)
+
+        # FIXME: Temporary error handling for calling a loan that hasn't been initialized yet
+        if amount is None:
+            print("This should never be printed")
+            amount = 0
+
+        return amount
 
 if __name__ == "__main__":
     ACC = Savings(10000, datetime.date.today(), 0.0435)
