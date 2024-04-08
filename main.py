@@ -144,19 +144,24 @@ if __name__ == "__main__":
     )
 
     # Add a line renderer to the figure
-    p.line(x=df['Date'], y=df['Net'], line_width=2, line_color='green')
-    p.line(x=df['Date'], y=df['Gross'], line_width=2, line_color='lime')
-    p.line(x=df['Date'], y=df['Debt'], line_width=2, line_color='red')
-    p.line(x=df['Date'], y=df['Savings'], line_width=2, line_color='yellow')
-    p.line(x=df['Date'], y=df['Investments'], line_width=2, line_color='purple')
-    p.line(x=df['Date'], y=df['Assets'], line_width=2, line_color='pink')
+    p.line(x=df['Date'], y=df['Net'], legend_label="Net", line_width=8, line_color='green')
+    p.line(x=df['Date'], y=df['Gross'], legend_label="Gross", line_width=1, line_dash=(4, 4), line_color='lime')
+    p.line(x=df['Date'], y=-df['Debt'], legend_label="Debt", line_width=1, line_dash=(4, 4), line_color='red')
+    p.line(x=df['Date'], y=df['Savings'], legend_label="Savings", line_width=1, line_color='yellow')
+    p.line(x=df['Date'], y=df['Investments'], legend_label="Investments", line_width=1, line_color='purple')
+    p.line(x=df['Date'], y=df['Assets'], legend_label="Assets", line_width=1, line_color='pink')
+
+    p.legend.title = "Categories"
+    p.title.text = "Net Worth"
+    p.title.align = "center"
+    p.legend.location = "top_left"
 
     # Format graph
-    date_pattern = ["%Y-%m-%d"]
+    # date_pattern = "%Y/%m"
     p.xaxis.formatter = DatetimeTickFormatter(
-        days = date_pattern,
-        months = date_pattern,
-        years = date_pattern
+        days = "%Y / %m / %d",
+        months = "%Y / %m",
+        years = "%Y"
     )
     p.xaxis.major_label_orientation=radians(80)
     p.yaxis.formatter = NumeralTickFormatter(format="$0,0.00")
