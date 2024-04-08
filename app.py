@@ -15,6 +15,7 @@ import bokeh.embed
 import bokeh.plotting
 import pandas as pd
 from flask import Flask, flash, redirect, render_template, request, url_for
+from markupsafe import Markup
 
 # from portfolio import Portfolio
 
@@ -58,7 +59,15 @@ def index():
     # print(script)
     # print(div)
 
-    return render_template("form.html", messages=messages, script=script, div=div)
+    # NOTE: Jinja has a feature called auto-escaping, which automatically escapes any values sent
+    # to it, like using "\n" or "\\" in python strings. This can be disabled by either adding the
+    # "|safe" suffix to the end of the Jinja call, or by calling markupsafe.Markup() on the block.
+    return render_template(
+        "form.html",
+        messages=messages,
+        script=Markup(script),
+        div=Markup(div)
+    )
 
 @app.route('/create/', methods=('GET', 'POST'))
 def create():
