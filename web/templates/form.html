@@ -11,7 +11,9 @@
     {% endfor %}
 
     <!-- Insert actual Bokeh Plot -->
+    {% autoescape false %}
     {{ div }}
+    {% endautoescape %}
 
     <h1>Budget Form</h1>
     <form>

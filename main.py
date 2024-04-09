@@ -115,15 +115,15 @@ if __name__ == "__main__":
     curdoc().theme = 'night_sky'
 
     # create a Bokeh figure
-    # p = bokeh.plotting.figure(title="Loan Change", x_axis_label='Date', y_axis_label='Amount')
     p = bokeh.plotting.figure(
-        title="Loan Change",
+        title="Net Worth Projection",
         x_axis_label='Date (years)',
         x_axis_type='datetime',
         y_axis_label='Amount',
         y_axis_type='linear',
         width=1200,
-        height=600
+        height=600,
+        align="center"
     )
 
     # Add a line renderer to the figure
@@ -135,8 +135,6 @@ if __name__ == "__main__":
     p.line(x=df['Date'], y=df['Assets'], legend_label="Assets", line_width=1, line_color='pink')
 
     p.legend.title = "Categories"
-    p.title.text = "Net Worth"
-    p.title.align = "center"
     p.legend.location = "top_left"
 
     # Format graph
