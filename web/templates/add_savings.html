@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>{% block title %} Add a New Asset {% endblock %}</h1>
+    <h1>{% block title %} Add a New Savings Account {% endblock %}</h1>
     <form method="post">
 
         <label for="portfolio">Select Portfolio</label><br>
@@ -10,20 +10,28 @@
         <input type="radio" type="number" name="portfolio" id="2" value=2>Portfolio #3</input>
         <br><br><br>
 
-        <label for="name">Asset Name:</label><br>
+        <label for="name">Savings Account Name:</label><br>
         <input
             type="text"
             name="name"
             placeholder="Asset Name"
-            value="House" />
+            value="HYSA" />
         <br><br><br>
 
-        <label for="name">Asset Value:</label><br>
+        <label for="name">Balance:</label><br>
         <input
             type="number"
             name="amount"
-            placeholder=400000
-            value=400000 />
+            placeholder=0
+            value=12000 />
+        <br><br><br>
+
+        <label for="name">Recurring Deposit:</label><br>
+        <input
+            type="number"
+            name="recur"
+            placeholder=0
+            value=2500 />
         <br><br><br>
 
         <label for="name">Expected APR:</label><br>
@@ -31,15 +39,15 @@
             type="number"
             name="apr"
             placeholder=0.00
-            value=0.08 />
+            value=0.043 />
         <br><br><br>
 
-        <label for="name">Purchase Date:</label><br>
+        <label for="name">Start Date:</label><br>
         <input
             type="date"
             id="start"
             name="start"
-            value="2025-05-25" />
+            value="2024-02-05" />
         <br><br><br>
 
         <button type="submit">Submit</button>

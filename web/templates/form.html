@@ -5,8 +5,11 @@
     <h1>{% block title %} Messages {% endblock %}</h1>
     {% for message in messages %}
         <div class='message'>
-            <h3>{{ message['title'] }}</h3>
-            <p>{{ message['content'] }}</p>
+            <h3>{{ message['Name'] }}</h3>
+            <p> {{ message['start'] }} </p>
+            <p> Starting Value = ${{ message['Amount'] }} </p>
+            <p> Recurring Deposit = ${{ message['Recurring'] }} </p>
+            <p> Expected APR = {{ message['APR'] }}% </p>
         </div>
     {% endfor %}
 
@@ -16,7 +19,7 @@
     {% endautoescape %}
 
     <h1>Budget Form</h1>
-    <form>
+    <form action="{{ url_for('index') }}", method="post">
         <label for="age">Current Age:</label>
         <input
             type="number"
@@ -60,5 +63,6 @@
         <label for="invest">Investments:</label>
         <input type="number" id="invest" name="invest">
         <br><br>
+        <button type="submit">Enter</button>
     </form>
 {% endblock %}

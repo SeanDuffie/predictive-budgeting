@@ -131,8 +131,67 @@ def add_asset():
 
     return render_template('add_asset.html')
 
+@app.route('/add_savings/', methods=('GET', 'POST'))
+def add_savings():
+    if request.method == 'POST':
+        num = int(request.form["portfolio"])
+        name = request.form.get("name")
+        start = datetime.date.fromisoformat(request.form.get("start"))
+        amount = float(request.form.get("amount"))
+        recur = float(request.form.get("recur"))
+        apr = float(request.form.get("apr"))
+
+        # Handle errors and send back to index if successful
+        if num is None:
+            flash('Must select a Portfolio')
+        elif num < 0 or num >= len(pfs):
+            flash('Choose a valid portfolio')
+        elif not start:
+            flash('Start date is required!')
+        elif not amount:
+            flash('Starting balance is required!')
+        elif not apr:
+            flash('APR is required!')
+        elif not name:
+            flash('Asset Name is required!')
+        else:
+            messages.append({'Name': name, 'Amount': amount, "Recurring": recur, 'APR': apr, 'start': start})
+            pfs[num].add_savings(deposit=amount, start=start, recur=recur, apr=apr, name=name)
+            return redirect(url_for('index'))
+
+    return render_template('add_savings.html')
+
+@app.route('/add_investment/', methods=('GET', 'POST'))
+def add_investment():
+    if request.method == 'POST':
+        num = int(request.form["portfolio"])
+        name = request.form.get("name")
+        start = datetime.date.fromisoformat(request.form.get("start"))
+        amount = float(request.form.get("amount"))
+        recur = float(request.form.get("recur"))
+        apr = float(request.form.get("apr"))
+
+        # Handle errors and send back to index if successful
+        if num is None:
+            flash('Must select a Portfolio')
+        elif num < 0 or num >= len(pfs):
+            flash('Choose a valid portfolio')
+        elif not start:
+            flash('Start date is required!')
+        elif not amount:
+            flash('Starting balance is required!')
+        elif not apr:
+            flash('APR is required!')
+        elif not name:
+            flash('Asset Name is required!')
+        else:
+            messages.append({'Name': name, 'Amount': amount, "Recurring": recur, 'APR': apr, 'start': start})
+            pfs[num].add_investment(deposit=amount, start=start, recur=recur, apr=apr, name=name)
+            return redirect(url_for('index'))
+
+    return render_template('add_investment.html')
+
     # <a href="{{ url_for('add_budget') }}">Add Budget</a>
-    # <a href="{{ url_for('add_investment') }}">Add Investment</a>
     # <a href="{{ url_for('add_loan') }}">Add Loan</a>
 
 @app.route('/create/', methods=('GET', 'POST'))

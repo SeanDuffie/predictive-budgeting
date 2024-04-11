@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %} {% endblock %} - FlaskApp</title>
+        <title>{% block title %} Block Title {% endblock %} - FlaskApp</title>
         <style>
             .message {
                 padding: 10px;
@@ -44,14 +44,16 @@
         <nav>
             <a href="{{ url_for('index') }}">FlaskApp</a>
             <a href="{{ url_for('create') }}">Create</a>
-            <a href="#">About</a>
+            <a href="{{ url_for('add_asset') }}">Add Asset</a>
+            <a href="{{ url_for('add_savings') }}">Add Savings</a>
+            <a href="{{ url_for('add_investment') }}">Add Investments</a>
         </nav>
         <hr>
         <div class="content">
             {% for message in get_flashed_messages() %}
                 <div class="alert">{{ message }}</div>
             {% endfor %}
-            {% block content %} {% endblock %}
+            {% block content %} Block Content {% endblock %}
         </div>
     </body>
 </html>
