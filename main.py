@@ -138,7 +138,6 @@ if __name__ == "__main__":
     p.legend.location = "top_left"
 
     # Format graph
-    # date_pattern = "%Y/%m"
     p.xaxis.formatter = DatetimeTickFormatter(
         days = "%Y / %m / %d",
         months = "%Y / %m",
