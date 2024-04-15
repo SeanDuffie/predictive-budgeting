@@ -15,11 +15,15 @@ import datetime
 import bokeh.embed
 import bokeh.plotting
 import bokeh.models
+import bokeh.layouts
 import pandas as pd
 from flask import Flask, flash, redirect, render_template, request, url_for
 from math import radians
 
 from portfolio import Portfolio
+
+WIDTH = 1200
+HEIGHT = 600
 
 
 RTDIR = os.path.dirname(__file__)
@@ -51,8 +55,8 @@ def index():
         x_axis_type='datetime',
         y_axis_label='Amount',
         y_axis_type='linear',
-        width=1200,
-        height=600,
+        width=WIDTH,
+        height=HEIGHT,
         align="center"
     )
     AGE = 23
@@ -88,6 +92,23 @@ def index():
     )
     plot.xaxis.major_label_orientation=radians(80)
     plot.yaxis.formatter = bokeh.models.NumeralTickFormatter(format="$0,0.00")
+
+    # Add the select bar
+    source = bokeh.models.ColumnDataSource( data=df )
+    select = bokeh.plotting.figure(title="Drag the middle and edges of the selection box to change the range above",
+                    height=100, width=WIDTH, y_range=plot.y_range,
+                    x_axis_type="datetime", y_axis_type=None,
+                    tools="", toolbar_location=None, background_fill_color="#efefef")
+
+    range_tool = bokeh.models.RangeTool(x_range=plot.x_range)
+    range_tool.overlay.fill_color = "navy"
+    range_tool.overlay.fill_alpha = 0.2
+
+    select.line('Date', 'Net', source=source)
+    select.ygrid.grid_line_color = None
+    select.add_tools(range_tool)
+
+    bokeh.plotting.show(bokeh.layouts.column(plot, select))
 
     script, div = bokeh.embed.components(plot)
 
