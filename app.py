@@ -108,9 +108,11 @@ def index():
     select.ygrid.grid_line_color = None
     select.add_tools(range_tool)
 
-    bokeh.plotting.show(bokeh.layouts.column(plot, select))
+    # Attach the Select Tool to the main figure
+    col = bokeh.layouts.column(plot, select)
 
-    script, div = bokeh.embed.components(plot)
+    # bokeh.plotting.show(col)
+    script, div = bokeh.embed.components(col)
 
     # NOTE: Jinja has a feature called auto-escaping, which automatically escapes any values sent
     # to it, like using "\n" or "\\" in python strings. This can be disabled by either adding the
