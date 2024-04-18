@@ -59,11 +59,13 @@ def home_appreciation(mortgage: float, time: int, rate: float = 0.05) -> float:
 
 if __name__ == "__main__":
     # I need more skills for this, make more progress on agri-scripts first before I return to this issue
-    timespan = 120 # months
+    # timespan = 120 # months
 
-    savings = 2500
-    invest = 1000
-    MORT = 3000
+    # savings = 2500
+    # invest = 1000
+    savings = 5000
+    invest = 5000
+    # MORT = 3000
 
     # savings_total = repeating_investment(savings, 0.043, timespan/12, 1)
     # print(f"Saved = {savings_total}")
@@ -88,18 +90,20 @@ if __name__ == "__main__":
     # # months = float(input("How many months between payments? (3 would be quarterly): "))
     # # interest = float(input("What interest will apply? (can be 0): "))
     sav_interest = 0.0433
-    inv_interest = 0.07
+    inv_interest = 0.1
 
     print()
     print(f"You would save ${repeating_investment(savings, sav_interest, 1, 1)} over 1 year ({int(sav_interest*100)}% interest)")
     print(f"You would save ${repeating_investment(savings, sav_interest, 2, 1)} over 2 years ({int(sav_interest*100)}% interest)")
     print(f"You would save ${repeating_investment(savings, sav_interest, 3, 1)} over 3 years ({int(sav_interest*100)}% interest)")
     print(f"You would save ${repeating_investment(savings, sav_interest, 10, 1)} over 10 years ({int(sav_interest*100)}% interest)")
+    print(f"You would save ${repeating_investment(savings, sav_interest, 67-23, 1)} over by retirement ({int(sav_interest*100)}% interest)")
     print()
     print(f"You would invest ${repeating_investment(invest, inv_interest, 1, 1)} over 1 year ({int(inv_interest*100)}% interest)")
     print(f"You would invest ${repeating_investment(invest, inv_interest, 2, 1)} over 2 years ({int(inv_interest*100)}% interest)")
     print(f"You would invest ${repeating_investment(invest, inv_interest, 3, 1)} over 3 years ({int(inv_interest*100)}% interest)")
     print(f"You would invest ${repeating_investment(invest, inv_interest, 10, 1)} over 10 years ({int(inv_interest*100)}% interest)")
+    print(f"You would invest ${repeating_investment(invest, inv_interest, 67-23, 1)} over by retirement ({int(inv_interest*100)}% interest)")
     print()
     print(f"After student loans are paid off, you will have an additional ${repeating_investment(2250, sav_interest, 1, 1)} on year 2")
     print(f"After student loans are paid off, you will have an additional ${repeating_investment(2250, sav_interest, 2, 1)} on year 3")
