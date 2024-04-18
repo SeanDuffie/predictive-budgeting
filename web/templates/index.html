@@ -2,9 +2,11 @@
 
 {% block content %}
     <!-- Insert actual Bokeh Plot -->
-    {% autoescape false %}
-    {{ div }}
-    {% endautoescape %}
+    <div class="centered">
+        {% autoescape false %}
+        {{ div }}
+        {% endautoescape %}
+    </div>
 
     <!-- TODO -->
     <h1>{% block title %} Projection {% endblock %}</h1>
