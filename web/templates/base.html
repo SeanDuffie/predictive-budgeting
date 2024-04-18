@@ -2,12 +2,12 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %} Block Title {% endblock %} - FlaskApp</title>
+        <title>{% block title %} Block Title {% endblock %} - Sean Duffie</title>
         <style>
             .message {
                 padding: 10px;
                 margin: 5px;
-                background-color: #f3f3f3
+                background-color: #f3f3f3;
             }
             nav a {
                 color: #d64161;
@@ -20,6 +20,15 @@
                 margin: 5px;
                 color: #970020;
                 background-color: #ffd5de;
+            }
+            .column {
+                float: left;
+                width: 23%;
+            }
+            .row::after {
+                content: "";
+                display: table;
+                clear: both;
             }
         </style>
         <!-- TODO -->
@@ -42,11 +51,9 @@
 
     <body>
         <nav>
-            <a href="{{ url_for('index') }}">FlaskApp</a>
-            <a href="{{ url_for('create') }}">Create</a>
-            <a href="{{ url_for('add_asset') }}">Add Asset</a>
-            <a href="{{ url_for('add_savings') }}">Add Savings</a>
-            <a href="{{ url_for('add_investment') }}">Add Investments</a>
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('budget') }}">Budget</a>
+            <a href="{{ url_for('house_cost') }}">Owning vs Renting</a>
         </nav>
         <hr>
         <div class="content">
