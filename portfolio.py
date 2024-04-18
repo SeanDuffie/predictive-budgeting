@@ -30,14 +30,14 @@ class Portfolio():
         self.start = start
         self.end = end
 
-    def add_loan(self, amount: float, apr: float, start: datetime.date, end: datetime.date, name: str):
+    def add_loan(self, amount: float, apr: float, start: datetime.date, term: int, name: str):
         """ Add a debt to your portfolio
 
         Args:
             amount (float): amount owed initially
             apr (float): interest rate on loan
             start (datetime.date): day that the loan started accruing interest
-            end (datetime.date): date the loan is due to be paid off
+            term (int): time in months before the loan should be paid off
             name (str): User friendly name for the loan
         """
         # Prompt for additional loans
@@ -45,13 +45,14 @@ class Portfolio():
             amount=amount,
             apr=apr,
             start=start,
-            term=end
+            term=term
         )
         self.loans[name] = new_loan
 
         if start < self.start:
             self.start = start
 
+        end = start + datetime.timedelta(days=term*30)
         if end > self.end:
             self.end = end
 
@@ -325,6 +326,9 @@ class Portfolio():
         timeline.to_csv(path_or_buf="./timeline.csv")
         return timeline
 
+    def to_html(self):
+        return "<p>Testing Portfolio to HTML</p>"
+
 if __name__ == "__main__":
     portfolio = Portfolio("net_worth.db")
 
@@ -349,7 +353,7 @@ if __name__ == "__main__":
     # Student Loans 1
     portfolio.add_loan(
         start=datetime.date(2024, 3, 5),
-        end=datetime.date(2033, 9, 5),
+        term=108,
         amount=5677.25,
         apr=.025,
         name="Student Loan #1"
@@ -357,7 +361,7 @@ if __name__ == "__main__":
 
     portfolio.add_loan(
         start=datetime.date(2024, 3, 5),
-        end=datetime.date(2033, 9, 5),
+        term=108,
         amount=4777.83,
         apr=.0348,
         name="Student Loan #2"
@@ -388,7 +392,7 @@ if __name__ == "__main__":
     MORT_TERM = 120
     portfolio.add_loan(
         start=PURCHASE_DATE,
-        end=MORT_TERM,
+        term=MORT_TERM,
         amount=MORT,
         apr=.06,
         name="Mortgage"
