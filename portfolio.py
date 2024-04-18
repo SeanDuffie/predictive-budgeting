@@ -323,7 +323,7 @@ class Portfolio():
                 ]
 
         timeline["Date"] = pd.to_datetime(timeline["Date"])
-        timeline.to_csv(path_or_buf="./timeline.csv")
+        # timeline.to_csv(path_or_buf="./timeline.csv")
         return timeline
 
     def to_html(self):
