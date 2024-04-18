@@ -133,6 +133,10 @@ class Savings:
 
         return amount
 
+    def to_html(self):
+        return "<p>Testing Savings to HTML</p>"
+
+
 if __name__ == "__main__":
     ACC = Savings(10000, datetime.date.today(), 0.0435)
     ACC.update_recurring(2000)

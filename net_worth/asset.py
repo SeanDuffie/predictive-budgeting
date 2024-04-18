@@ -121,6 +121,10 @@ class Asset:
 
         return amount
 
+    def to_html(self):
+        return "<p>Testing Asset to HTML</p>"
+
+
 if __name__ == "__main__":
     purchase_date = datetime.date(2025, 1, 1)
     HOUSE = Asset(330000, 0.08, purchase_date)

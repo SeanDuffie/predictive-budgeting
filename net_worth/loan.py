@@ -177,6 +177,9 @@ class Loan():
 
         return amount
 
+    def to_html(self):
+        return "<p>Testing Loan to HTML</p>"
+
 
 if __name__ == "__main__":
     print("Student Loans:")
