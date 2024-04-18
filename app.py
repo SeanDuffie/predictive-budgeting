@@ -108,6 +108,9 @@ def index():
     select.ygrid.grid_line_color = None
     select.add_tools(range_tool)
 
+    # plot.y_range.start = df["Net"].min() - ((df["Net"].max()-df["Net"].min()+1) * 0.05)
+    # plot.y_range.end = df["Net"].max() + ((df["Net"].max()-df["Net"].min()+1) * 0.05)
+
     # Attach the Select Tool to the main figure
     col = bokeh.layouts.column(plot, select)
 
@@ -119,7 +122,7 @@ def index():
     # "|safe" suffix to the end of the Jinja call, or by calling markupsafe.Markup() on the block.
     # This can also be done by adding an "{% autoescape false %} - {% endautoescape %}" block.
     return render_template(
-        "form.html",
+        "index.html",
         messages=messages,
         script=script,
         div=div
