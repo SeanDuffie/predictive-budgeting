@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>{% block title %} Add a New Asset {% endblock %}</h1>
+    <h1>{% block title %} Add a New Loan {% endblock %}</h1>
     <form method="post">
 
         <label for="portfolio">Select Portfolio</label><br>
@@ -9,14 +9,14 @@
         <input type="radio" type="number" name="portfolio" id="1" value=1>Portfolio #2</input>
         <input type="radio" type="number" name="portfolio" id="2" value=2>Portfolio #3</input><br>
 
-        <label for="name">Asset Name:</label><br>
+        <label for="name">Loan Name:</label><br>
         <input
             type="text"
             name="name"
-            placeholder="Asset Name"
-            value="House" /><br>
+            placeholder="Loan Name"
+            value="Mortgage" /><br>
 
-        <label for="name">Asset Value:</label><br>
+        <label for="name">Loan Balance:</label><br>
         <input
             type="number"
             name="amount"
@@ -28,14 +28,21 @@
             type="number"
             name="apr"
             placeholder=0.00
-            value=0.08 /><br>
+            value=0.05 /><br>
 
-        <label for="name">Purchase Date:</label><br>
+        <label for="name">Start Date:</label><br>
         <input
             type="date"
             id="start"
             name="start"
             value="2025-05-25" /><br>
+
+        <label for="term">Term Length:</label><br>
+        <input
+            type="number"
+            id="term"
+            name="term"
+            value="180" /><br>
 
         <button type="submit">Submit</button>
         <button type="button">Delete</button>

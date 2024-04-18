@@ -7,49 +7,45 @@
         <label for="portfolio">Select Portfolio</label><br>
         <input type="radio" type="number" name="portfolio" id="0" value=0 checked>Portfolio #1</input>
         <input type="radio" type="number" name="portfolio" id="1" value=1>Portfolio #2</input>
-        <input type="radio" type="number" name="portfolio" id="2" value=2>Portfolio #3</input>
-        <br><br><br>
+        <input type="radio" type="number" name="portfolio" id="2" value=2>Portfolio #3</input><br>
 
         <label for="name">Investment Account Name:</label><br>
         <input
             type="text"
             name="name"
             placeholder="Asset Name"
-            value="ETRADE" />
-        <br><br><br>
+            value="ETRADE" /><br>
 
         <label for="name">Balance:</label><br>
         <input
             type="number"
             name="amount"
             placeholder=0
-            value=11000 />
-        <br><br><br>
+            value=11000 /><br>
 
         <label for="name">Recurring Deposit:</label><br>
         <input
             type="number"
             name="recur"
             placeholder=0
-            value=500 />
-        <br><br><br>
+            value=500 /><br>
 
         <label for="name">Expected APR:</label><br>
         <input
             type="number"
             name="apr"
             placeholder=0.00
-            value=0.1 />
-        <br><br><br>
+            value=0.1 /><br>
 
         <label for="name">Start Date:</label><br>
         <input
             type="date"
             id="start"
             name="start"
-            value="2024-02-05" />
-        <br><br><br>
+            value="2024-02-05" /><br>
 
         <button type="submit">Submit</button>
+        <button type="button">Delete</button>
+        <button type="reset">Cancel</button>
     </form>
 {% endblock %}
