@@ -3,34 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %} Block Title {% endblock %} - Sean Duffie</title>
-        <style>
-            .message {
-                padding: 10px;
-                margin: 5px;
-                background-color: #f3f3f3;
-            }
-            nav a {
-                color: #d64161;
-                font-size: 3em;
-                margin-left: 50px;
-                text-decoration: none;
-            }
-            .alert {
-                padding: 20px;
-                margin: 5px;
-                color: #970020;
-                background-color: #ffd5de;
-            }
-            .column {
-                float: left;
-                width: 23%;
-            }
-            .row::after {
-                content: "";
-                display: table;
-                clear: both;
-            }
-        </style>
+        <link rel="stylesheet" href="static/style.css">
         <!-- TODO -->
         <script src="https://cdn.bokeh.org/bokeh/release/bokeh-3.4.0.min.js"
             crossorigin="anonymous"></script>
