@@ -76,7 +76,9 @@ def index():
 
     for scenario in pfs:
         df = scenario.project_net(date=END)
-        plot.line(x=df['Date'], y=df['Net'], legend_label="Net", line_width=8, line_color='green')
+        plot.line(x=df['Date'], y=df['Net'], legend_label="Net", line_width=4, line_color='green')
+        plot.line(x=df['Date'], y=df['Gross'], legend_label="Gross", line_width=2, line_color='blue')
+        plot.line(x=df['Date'], y=df['Debt'], legend_label="Debt", line_width=2, line_color='red')
 
     plot.legend.title = "Categories"
     plot.legend.location = "top_left"
