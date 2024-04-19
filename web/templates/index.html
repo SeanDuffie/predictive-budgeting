@@ -202,4 +202,26 @@
             name="income1end"
             value="2065-05-25" /><br>
     </form>
+
+    <!-- {% for portfolio in portfolios %}
+    <h2>Portfolio #</h2>
+        {% for elem in portfolio.elems() %}
+            {% if elem == None %}
+            <div class='message column'>
+            </div>
+            {% if message['type'] %}
+            <div class='message column'>
+                <form>
+                    <h3>{{ message['Name'] }}</h3>
+                    <p> {{ message['start'] }} </p>
+                    <p> Starting Value = ${{ message['Amount'] }} </p>
+                    <p> Recurring Deposit = ${{ message['Recurring'] }} </p>
+                    <label for=Expected APR = {{ message['APR'] }}% </p>
+                    <button type="reset">Cancel</button>
+                    <button type="submit">Submit</button>
+                    <button type="button">Delete</button>
+                </form>
+            </div>
+            {% endif %}
+    {% endfor %} -->
 {% endblock %}
