@@ -1,11 +1,17 @@
 """_summary_
 """
 import datetime
+import logging
 
 import pandas as pd
+from dateutil.rrule import MONTHLY, rrule
 
 from net_worth import Asset, Database, Loan, Savings, calculate_term
-from dateutil.rrule import MONTHLY, rrule
+
+# Initial Logger Settings
+FMT_MAIN = "%(asctime)s | %(levelname)-8s | %(name)-12s | %(message)s"
+logging.basicConfig(format=FMT_MAIN, level=logging.DEBUG, datefmt="%Y-%m-%d %H:%M:%S")
+logger = logging.getLogger("Main.Main")
 
 
 class Portfolio():

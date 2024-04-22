@@ -9,16 +9,16 @@
     Resources:
     - https://www.digitalocean.com/community/tutorials/how-to-use-web-forms-in-a-flask-application
 """
-import os
 import datetime
+import os
+from math import radians
 
 import bokeh.embed
-import bokeh.plotting
-import bokeh.models
 import bokeh.layouts
+import bokeh.models
+import bokeh.plotting
 import pandas as pd
 from flask import Flask, flash, redirect, render_template, request, url_for
-from math import radians
 
 from portfolio import Portfolio
 
