@@ -1,21 +1,31 @@
 """ @file budget.py
     @author Sean Duffie
-    @brief Based on the user's yearly income, it calculates the portions to various expenses and savings
-    
-    TODO: 
-    FIXME: The budget should be calculated on a monthly basis, this would solve the problems of paying of the loans or filling the emergency fund
+    @brief Based on the user's yearly income, it calculates the distributions to various sources
+
+    TODO: objectify the distribution
+    FIXME: The budget should be calculated on a monthly basis
+            this would solve the problems of paying of the loans or filling the emergency fund
 """
+import pandas as pd
+import datetime
+import dataclasses
+from typing import NamedTuple
+from dateutil.rrule import MONTHLY, rrule
+import logging
+
 from .income import Income
 
+logger = logging.getLogger("Budget")
+
 distribution = {
-    "Donations": 50,
-    "Insurance": 0,
-    "Housing": 1450,
+    "Deduct": 50,
+    "Debts (minimum)": 0,
+    "Housing": 1700,
     "Utilities": 200,
     "Internet": 90,
     "Transportation": 80,
     "Food": 250,
-    "Debts (minimum)": 0,
+    "Insurance": 0,
     "HYSA (Emergency)": 2500,
     "Investments": 500,
     "Debts (extra)": 0,
@@ -23,10 +33,31 @@ distribution = {
 }
 
 
+@dataclasses.dataclass
+class Distribution:
+    Income: float
+    Deduct: float
+    Tax: float
+    Debt: float
+    Housing: float
+    Utilities: float
+    Internet: float
+    Transport: float
+    Food: float
+    Savings: float
+    Invest: float
+
+    def to_df(self):
+        elements = [Income, ]
+        return elements
+
+
 class Budget():
     """_summary_
     """
-    def __init__(self, gross: float, state: str, **flags):
+    plan: pd.DataFrame
+
+    def __init__(self, gross: float, state: str, start: datetime.date, end: datetime.date, **flags):
         # TODO: add flags for things like paycheck/bill interval
         for key, value in flags.items():
             print("{}: {}".format(key,value))
@@ -36,10 +67,41 @@ class Budget():
         self.net = self.income.net_monthly
         self.remaining = self.net
 
-        self.distribution = self.generate_budget()
+        dist = [
+            'Date', 'Income', 'Deduct', 'Tax', 'Debt', 'Housing', 'Utilities',
+            'Internet', 'Transport', 'Food', 'Savings', 'Investments'
+        ]
+        self.plan = pd.DataFrame(columns=dist)
+        term = (end.year - start.year) * 12 + (end.month - start.month)
+        for month in rrule(freq=MONTHLY, count=term, dtstart=start):
+            self.plan.loc[len(self.plan)] = [month, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        self.plan["Date"] = pd.to_datetime(self.plan["Date"])
 
-    def add_minimum_payments(self, min_payment: float):
-        distribution["Debts (minimum)"] += min_payment
+    def default_budget(self, dist: Distribution):
+        date, elements = dist.to_df()
+        self.plan
+
+    def update_range(self, start, end, dist):
+        if start > end:
+            logger.error("End date must be after start date")
+        if start < self.plan["Date"].get(0):
+            logger.error("Start Date must be within the Budget range")
+        elif start > self.plan["Date"].get(self.plan["Date"].size - 1):
+            logger.error("Start Date must be within the Budget range")
+        if end < self.plan["Date"].get(0):
+            logger.error("End Date must be within the Budget range")
+        elif end > self.plan["Date"].get(self.plan["Date"].size - 1):
+            logger.error("End Date must be within the Budget range")
+
+        term = (end.year - start.year) * 12 + (end.month - start.month)
+        for month in rrule(freq=MONTHLY, count=term, dtstart=start):
+            self.plan.loc[len(self.plan)] = [month, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        self.plan["Date"] = pd.to_datetime(self.plan["Date"])
+        elements = dist.to_df()
+
+    def get_month(self, date: datetime.date):
+        return self.plan[self.plan.loc
+
 
     def generate_budget(self):
         return distribution
