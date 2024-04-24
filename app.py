@@ -10,6 +10,7 @@
     - https://www.digitalocean.com/community/tutorials/how-to-use-web-forms-in-a-flask-application
 """
 import datetime
+import logging
 import os
 from math import radians
 
@@ -20,7 +21,12 @@ import bokeh.plotting
 import pandas as pd
 from flask import Flask, flash, redirect, render_template, request, url_for
 
+import logFormat
 from portfolio import Portfolio
+
+# Initial Logger Settings
+logFormat.format_logs(logger_name=__name__)
+logger = logging.getLogger(__name__)
 
 WIDTH = 1200
 HEIGHT = 600

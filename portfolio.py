@@ -7,11 +7,11 @@ import pandas as pd
 from dateutil.rrule import MONTHLY, rrule
 
 from net_worth import Asset, Database, Loan, Savings, calculate_term
+import logFormat
 
 # Initial Logger Settings
-FMT_MAIN = "%(asctime)s | %(levelname)-8s | %(name)-12s | %(message)s"
-logging.basicConfig(format=FMT_MAIN, level=logging.DEBUG, datefmt="%Y-%m-%d %H:%M:%S")
-logger = logging.getLogger("Main.Main")
+logFormat.format_logs(logger_name="Portfolio")
+logger = logging.getLogger("Portfolio")
 
 
 class Portfolio():
@@ -409,10 +409,5 @@ if __name__ == "__main__":
     portfolio.calculate_net(TL3)
     portfolio.calculate_ratio(TL3)
 
-    print("\nHYSA history:")
-    for event in portfolio.savings["American Express HYSA"].history:
-        print(f"\t{event}")
-
-    print("\nETRADE history:")
-    for event in portfolio.savings["Stocks"].history:
-        print(f"\t{event}")
+    logger.info("HYSA history:\n%s\n", portfolio.savings["American Express HYSA"].history)
+    logger.info("ETRADE history:\n%s\n", portfolio.savings["Stocks"].history)

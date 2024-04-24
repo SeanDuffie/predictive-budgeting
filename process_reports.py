@@ -30,16 +30,12 @@ import pandas
 from transaction import Transaction  # , Expense, Income
 
 RTDIR = os.path.dirname(__file__)
+logger = logging.getLogger("app")
 
 class Database:
     """ Objectified database for budget organization
     """
     def __init__(self, path: str = ""):
-        # Initial Logger Settings
-        fmt_main = "%(asctime)s\t| %(levelname)s\t| %(message)s"
-        logging.basicConfig(format=fmt_main, level=logging.INFO,
-                    datefmt="%Y-%m-%d %H:%M:%S")
-
         # Validate the path
         if path == "" or not os.path.exists(path):
             path = filedialog.askopenfilename(
@@ -50,7 +46,7 @@ class Database:
                 ],
                 initialdir=f"{RTDIR}\\database\\")
             if path == "":
-                logging.error("Path blank. Exiting...")
+                logger.error("Path blank. Exiting...")
                 sys.exit(1)
 
         # Read in the data
@@ -131,11 +127,6 @@ class AmexReport:
     recommend placing it in the "./database" directory TODO: adjust location for raw files later
     """
     def __init__(self, path: str = "") -> None:
-        # Initial Logger Settings
-        fmt_main = "%(asctime)s\t| %(levelname)s\t| %(message)s"
-        logging.basicConfig(format=fmt_main, level=logging.INFO,
-                    datefmt="%Y-%m-%d %H:%M:%S")
-
         # Validate Path
         if path == "" or not os.path.exists(path):
             path = filedialog.askopenfilename(
@@ -146,7 +137,7 @@ class AmexReport:
                 initialdir=f"{RTDIR}\\database\\")
 
             if path == "":
-                logging.error("Path blank. Exiting...")
+                logger.error("Path blank. Exiting...")
                 sys.exit(1)
 
         # Read in the data
@@ -166,11 +157,6 @@ class WFReport:
     recommend placing it in the "./database" directory TODO: adjust location for raw files later
     """
     def __init__(self, path: str = "") -> None:
-        # Initial Logger Settings
-        fmt_main = "%(asctime)s\t| %(levelname)s\t| %(message)s"
-        logging.basicConfig(format=fmt_main, level=logging.INFO,
-                    datefmt="%Y-%m-%d %H:%M:%S")
-
         # Validate Path
         if path == "" or not os.path.exists(path):
             path = filedialog.askopenfilename(
@@ -181,7 +167,7 @@ class WFReport:
                 initialdir=f"{RTDIR}\\database\\")
 
             if path == "":
-                logging.error("Path blank. Exiting...")
+                logger.error("Path blank. Exiting...")
                 sys.exit(1)
 
         # Read in the data
