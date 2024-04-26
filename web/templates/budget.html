@@ -1,9 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Budget Form</h1>
-<form action="{{ url_for('index') }}", method="post">
-    <label for="expenses">Expense CSVs:</label>
-    <input type="file" id="expenses" name="expenses"><br>
-</form>
+    <!-- Insert actual Bokeh Plot -->
+    <div class="centered">
+        {% autoescape false %}
+        {{ div }}
+        {% endautoescape %}
+    </div>
+
+    <h1>Budget Form</h1>
+    <form action="{{ url_for('index') }}", method="post">
+        <label for="expenses">Expense CSVs:</label>
+        <input type="file" id="expenses" name="expenses"><br>
+    </form>
 {% endblock %}

@@ -6,6 +6,12 @@
     Additionally, this will display the Bokeh data visualization tools and potentially allow users
     to store and load data.
 
+    TODO: add delete/modify buttons for existing portfolio elements
+    TODO: Tie button press to portfolio functions
+    TODO: Pie chart for budget
+    TODO: AJAX for live updates
+    TODO: Clean up HTML using automation with python
+
     Resources:
     - https://www.digitalocean.com/community/tutorials/how-to-use-web-forms-in-a-flask-application
 """
