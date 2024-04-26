@@ -64,9 +64,9 @@ class Portfolio():
 
     def remove_loan(self):
         # Preview loans to identify which to delete
-        print("Previewing Options:")
+        logger.info("Previewing Options:")
         for key, loan in self.loans.items():
-            print(f"{key}) {loan.get_balance()}")
+            logger.info(f"{key}) {loan.get_balance()}")
 
         # Identify which loan to remove
         index = int(input("Enter which loan you want to remove: "))
@@ -77,9 +77,9 @@ class Portfolio():
         del self.loans[index]
 
         # View modified list
-        # print("Viewing Results:")
+        # logger.info("Viewing Results:")
         # for i, loan in enumerate(self.loans):
-        #     print(f"{i}) {loan.name}")
+        #     logger.info(f"{i}) {loan.name}")
 
         # Update database table
 
@@ -105,9 +105,9 @@ class Portfolio():
 
     def remove_asset(self):
         # Preview savings to identify which to delete
-        print("Previewing Options:")
+        logger.info("Previewing Options:")
         for key, asset in self.assets.items():
-            print(f"{key}: {asset.value}")
+            logger.info(f"{key}: {asset.value}")
 
         # Identify which savings to remove
         index = input("Enter which savings you want to remove: ")
@@ -127,9 +127,9 @@ class Portfolio():
 
     def remove_investment(self):
         # Preview savings to identify which to delete
-        print("Previewing Options:")
+        logger.info("Previewing Options:")
         for key, inv in self.investments.items():
-            print(f"{key}: {inv.balance}")
+            logger.info(f"{key}: {inv.balance}")
 
         # Identify which savings to remove
         index = input("Enter which investment you want to remove: ")
@@ -158,9 +158,9 @@ class Portfolio():
 
     def remove_savings(self):
         # Preview savings to identify which to delete
-        print("Previewing Options:")
+        logger.info("Previewing Options:")
         for key, val in self.savings.items():
-            print(f"{key}: {val.balance}")
+            logger.info(f"{key}: {val.balance}")
 
         # Identify which savings to remove
         index = input("Enter which savings you want to remove: ")
@@ -171,20 +171,14 @@ class Portfolio():
         self.savings.pop(index)
 
     def update_all(self, date):
-        # print("Updating Savings")
         for key, val in self.savings.items():
             val.update(date)
-            # print(f"\t{key}: {val.balance}")
 
-        # print("Updating Investments")
         for key, val in self.investments.items():
             val.update(date)
-            # print(f"\t{key}: {val.value}")
 
-        # print("Updating Assets")
         for key, val in self.assets.items():
             val.update(date)
-            # print(f"\t{key}: {val.value}")
 
     def calculate_gross(self, date: datetime.date):
         """ Sums together the values of all portfolio
@@ -235,13 +229,13 @@ class Portfolio():
         Returns:
             float: Net Worth
         """
-        print(f"{len(self.savings)} Savings | {len(self.investments)} Investments | {len(self.assets)} Assets | {len(self.loans)} Loans")
+        logger.info(f"{len(self.savings)} Savings | {len(self.investments)} Investments | {len(self.assets)} Assets | {len(self.loans)} Loans")
         gross = self.calculate_gross(date)
         debts = self.calculate_debts(date)
 
         total = gross - debts
 
-        print(f"Total net worth: ${total} (${gross} - ${debts})")
+        logger.info("Total net worth: $%f ($%f - $%f)", total, gross, debts)
 
         return total
 
@@ -261,7 +255,7 @@ class Portfolio():
         except ZeroDivisionError:
             ratio = 0
 
-        print(f"Debt to Income Ratio: {ratio}")
+        logger.info("Debt to Income Ratio: %f", ratio)
 
         return ratio
 
@@ -333,7 +327,52 @@ class Portfolio():
         return timeline
 
     def to_html(self):
-        return "<p>Testing Portfolio to HTML</p>"
+        loan_list = list(self.loans.values())
+        asset_list = list(self.assets.values())
+        investment_list = list(self.investments.values())
+        savings_list = list(self.savings.values())
+
+        html = "<h2>Portfolio #</h2>\n"
+
+        rows = max(
+            [
+                len(self.loans),
+                len(self.assets),
+                len(self.investments),
+                len(self.savings)
+            ]
+        )
+
+        for _ in range(rows):
+            html += "\t<div class='row'>\n"
+
+            html += "\t\t<div class='message column'>\n"
+            if len(savings_list) > 0:
+                html += "\t\t\t<h3>Savings</h3>\n"
+                html += savings_list.pop(0).to_html()
+            html += "\t\t</div>\n"
+
+            html += "\t\t<div class='message column'>\n"
+            if len(investment_list) > 0:
+                html += "\t\t\t<h3>Investments</h3>\n"
+                html += investment_list.pop(0).to_html()
+            html += "\t\t</div>\n"
+
+            html += "\t\t<div class='message column'>\n"
+            if len(asset_list) > 0:
+                html += "\t\t\t<h3>Assets</h3>\n"
+                html += asset_list.pop(0).to_html()
+            html += "\t\t</div>\n"
+
+            html += "\t\t<div class='message column'>\n"
+            if len(loan_list) > 0:
+                html += "\t\t\t<h3>Loans</h3>\n"
+                html += loan_list.pop(0).to_html()
+            html += "\t\t</div>\n"
+
+            html += "\t</div>\n"
+
+        return html
 
 if __name__ == "__main__":
     portfolio = Portfolio("net_worth.db")
@@ -411,3 +450,4 @@ if __name__ == "__main__":
 
     logger.info("HYSA history:\n%s\n", portfolio.savings["American Express HYSA"].history)
     logger.info("ETRADE history:\n%s\n", portfolio.savings["Stocks"].history)
+    logger.info("HTML:\n%s", portfolio.to_html())
