@@ -28,20 +28,26 @@
                 <input
                     type="number"
                     name="amount"
-                    placeholder=0
-                    value=12000 /><br>
+                    placeholder="0"
+                    value="12000"
+                    min="0"
+                    step="0.01" /><br>
                 <label for="name">Recurring Deposit:</label><br>
                 <input
                     type="number"
                     name="recur"
-                    placeholder=0
-                    value=2500 /><br>
+                    placeholder="0"
+                    value="2500"
+                    min="0"
+                    step="0.01" /><br>
                 <label for="name">Expected APR:</label><br>
                 <input
                     type="number"
                     name="apr"
-                    placeholder=0.00
-                    value=0.043 /><br>
+                    placeholder="0.00"
+                    value="0.043"
+                    min="0"
+                    step="0.0001" /><br>
                 <label for="name">Start Date:</label><br>
                 <input
                     type="date"
@@ -70,20 +76,26 @@
                 <input
                     type="number"
                     name="amount"
-                    placeholder=0
-                    value=11000 /><br>
+                    placeholder="0"
+                    value="11000"
+                    min="0"
+                    step="0.01" /><br>
                 <label for="name">Recurring Deposit:</label><br>
                 <input
                     type="number"
                     name="recur"
-                    placeholder=0
-                    value=500 /><br>
+                    placeholder="0"
+                    value="500"
+                    min="0"
+                    step="0.01" /><br>
                 <label for="name">Expected APR:</label><br>
                 <input
                     type="number"
                     name="apr"
-                    placeholder=0.00
-                    value=0.1 /><br>
+                    placeholder="0.00"
+                    value="0.1"
+                    min="0"
+                    step="0.0001"/><br>
                 <label for="name">Start Date:</label><br>
                 <input
                     type="date"
@@ -112,14 +124,18 @@
                 <input
                     type="number"
                     name="amount"
-                    placeholder=400000
-                    value=400000 /><br>
+                    placeholder="400000"
+                    value="400000"
+                    min="0"
+                    step="0.01" /><br>
                 <label for="name">Expected APR:</label><br>
                 <input
                     type="number"
                     name="apr"
-                    placeholder=0.00
-                    value=0.08 /><br>
+                    placeholder="0.00"
+                    value="0.08"
+                    min="0"
+                    step="0.0001"/><br>
                 <label for="name">Purchase Date:</label><br>
                 <input
                     type="date"
@@ -148,14 +164,18 @@
                 <input
                     type="number"
                     name="amount"
-                    placeholder=400000
-                    value=400000 /><br>
+                    placeholder="400000"
+                    value="400000"
+                    min="0"
+                    step="0.01"/><br>
                 <label for="name">Expected APR:</label><br>
                 <input
                     type="number"
                     name="apr"
-                    placeholder=0.00
-                    value=0.05 /><br>
+                    placeholder="0.00"
+                    value="0.05"
+                    min="0"
+                    step="0.0001" /><br>
                 <label for="name">Start Date:</label><br>
                 <input
                     type="date"
@@ -167,7 +187,9 @@
                     type="number"
                     id="term"
                     name="term"
-                    value="180" /><br>
+                    value="180"
+                    min="0"
+                    step="1" /><br>
                 <button type="submit">Submit</button>
                 <button type="button">Delete</button>
                 <button type="reset">Cancel</button>
@@ -176,7 +198,7 @@
     </div>
 
     {% for portfolio in portfolios %}
-    {{ portfolio.to_html() | safe }}
+    {{ portfolio.to_html("Main") | safe }}
     {% endfor %}
 
     <h1>New Portfolio Form</h1>
@@ -192,7 +214,9 @@
             type="number"
             id="income1"
             name="income1"
-            value=104000 /><br>
+            value="104000"
+            min="0"
+            step="0.01" /><br>
         <label for="income1start">Start Date:</label>
         <input
             type="date"

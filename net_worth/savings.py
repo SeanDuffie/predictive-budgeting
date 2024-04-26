@@ -133,8 +133,12 @@ class Savings:
 
         return amount
 
-    def to_html(self):
-        return "<p>Testing Savings to HTML</p>"
+    def to_html(self, name: str):
+        html = f"<p>Starting Balance:\t${self.history["Balance"].get(0)}</p>\n"
+        html += f"<p>Recurring Deposit:\t${self.recur}</p>\n"
+        html += f"<p>Expected APR:   \t{self.mpr*1200}%</p>\n"
+        html += f"<p>Starting Date:  \t{self.history["Date"].get(0)}</p>\n"
+        return html
 
 
 if __name__ == "__main__":

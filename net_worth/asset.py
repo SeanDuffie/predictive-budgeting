@@ -121,8 +121,12 @@ class Asset:
 
         return amount
 
-    def to_html(self):
-        return "<p>Testing Asset to HTML</p>"
+    def to_html(self, name: str):
+        html = f"<p>Starting Value:\t${self.history["Balance"].get(0)}</p>\n"
+        html += f"<p>Expected APR:   \t{self.expected_mpr*1200}%</p>\n"
+        html += f"<p>Starting Date:  \t{self.history["Date"].get(0)}</p>\n"
+
+        return html
 
 
 if __name__ == "__main__":

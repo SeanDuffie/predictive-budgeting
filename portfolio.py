@@ -326,13 +326,11 @@ class Portfolio():
         # timeline.to_csv(path_or_buf="./timeline.csv")
         return timeline
 
-    def to_html(self):
-        loan_list = list(self.loans.values())
-        asset_list = list(self.assets.values())
-        investment_list = list(self.investments.values())
-        savings_list = list(self.savings.values())
-
-        html = "<h2>Portfolio #</h2>\n"
+    def to_html(self, name: str):
+        loan_list = list(self.loans.items())
+        asset_list = list(self.assets.items())
+        investment_list = list(self.investments.items())
+        savings_list = list(self.savings.items())
 
         rows = max(
             [
@@ -343,31 +341,40 @@ class Portfolio():
             ]
         )
 
+        if rows > 0:
+            html = f"<h2>Portfolio: {name}</h2>\n"
+        else:
+            html = ""
         for _ in range(rows):
             html += "\t<div class='row'>\n"
 
             html += "\t\t<div class='message column'>\n"
             if len(savings_list) > 0:
-                html += "\t\t\t<h3>Savings</h3>\n"
-                html += savings_list.pop(0).to_html()
+                sav_element = savings_list.pop(0)
+                html += f"\t\t\t<h3>{sav_element[0]} (Savings)</h3>\n"
+                # FIXME: Put the name back into the element objects!
+                html += f"\t\t\t\t{sav_element[1].to_html(sav_element[0])}"
             html += "\t\t</div>\n"
 
             html += "\t\t<div class='message column'>\n"
             if len(investment_list) > 0:
-                html += "\t\t\t<h3>Investments</h3>\n"
-                html += investment_list.pop(0).to_html()
+                inv_element = investment_list.pop(0)
+                html += f"\t\t\t<h3>{inv_element[0]} (Investment)</h3>\n"
+                html += f"\t\t\t\t{inv_element[1].to_html(inv_element[0])}"
             html += "\t\t</div>\n"
 
             html += "\t\t<div class='message column'>\n"
             if len(asset_list) > 0:
-                html += "\t\t\t<h3>Assets</h3>\n"
-                html += asset_list.pop(0).to_html()
+                ast_element = asset_list.pop(0)
+                html += f"\t\t\t<h3>{ast_element[0]} (Asset)</h3>\n"
+                html += f"\t\t\t\t{ast_element[1].to_html(ast_element[0])}"
             html += "\t\t</div>\n"
 
             html += "\t\t<div class='message column'>\n"
             if len(loan_list) > 0:
-                html += "\t\t\t<h3>Loans</h3>\n"
-                html += loan_list.pop(0).to_html()
+                loan_element = loan_list.pop(0)
+                html += f"\t\t\t<h3>{loan_element[0]} (Loan)</h3>\n"
+                html += f"\t\t\t\t{loan_element[1].to_html(loan_element[0])}"
             html += "\t\t</div>\n"
 
             html += "\t</div>\n"
