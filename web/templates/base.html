@@ -15,11 +15,8 @@
                 crossorigin="anonymous"></script>
         <script src="https://cdn.bokeh.org/bokeh/release/bokeh-mathjax-3.4.0.min.js"
                 crossorigin="anonymous"></script>
-
-        <!-- Insert Bokeh Plot Script -->
-        {% autoescape false %}
-        {{ script }}
-        {% endautoescape %}
+        <script type="text/javascript"
+                src="static/update_plot.js"></script>
     </head>
 
     <body>

@@ -126,7 +126,7 @@ def index():
     col = bokeh.layouts.column(plot, select)
 
     # bokeh.plotting.show(col)
-    script, div = bokeh.embed.components(col)
+    script_bok, div_bok = bokeh.embed.components(col)
 
     # NOTE: Jinja has a feature called auto-escaping, which automatically escapes any values sent
     # to it, like using "\n" or "\\" in python strings. This can be disabled by either adding the
@@ -135,8 +135,8 @@ def index():
     return render_template(
         "index.html",
         portfolios=pfs,
-        script=script,
-        div=div
+        script=script_bok,
+        div=div_bok
     )
 
 @app.route('/form_savings/', methods=('GET', 'POST'))
