@@ -3,9 +3,8 @@
 {% block content %}
     <!-- Insert actual Bokeh Plot -->
     <div class="centered">
-        {% autoescape false %}
-        {{ div_bok }}
-        {% endautoescape %}
+        {{ div_bok | safe }}
+        {{ script_bok | safe }}
     </div>
 
     <h1>Budget Form</h1>

@@ -58,20 +58,10 @@ pfs = [Portfolio(
             age=AGE
         )]
 messages: dict = []
+FLAG = False
 
 @app.route("/", methods = ["GET", "POST"])
 def index():
-    plot = bokeh.plotting.figure(
-        title="Loan Change",
-        x_axis_label='Date (years)',
-        x_axis_type='datetime',
-        y_axis_label='Amount',
-        y_axis_type='linear',
-        width=WIDTH,
-        height=HEIGHT,
-        align="center"
-    )
-
     if request.method == "POST":
         age = request.form.get("age")
         start = datetime.date.fromisoformat(request.form.get("income1start"))
@@ -85,6 +75,183 @@ def index():
                 age=age
             )
         )
+
+    # bokeh.plotting.show(col)
+    script_bok, div_bok = generate_plot()
+
+    # NOTE: Jinja has a feature called auto-escaping, which automatically escapes any values sent
+    # to it, like using "\n" or "\\" in python strings. This can be disabled by either adding the
+    # "|safe" suffix to the end of the Jinja call, or by calling markupsafe.Markup() on the block.
+    # This can also be done by adding an "{% autoescape false %} - {% endautoescape %}" block.
+    global FLAG
+    if FLAG:
+        return render_template(
+            "update_content.html",
+            portfolios=pfs,
+            script_bok=script_bok,
+            div_bok=div_bok
+        )
+    FLAG = True
+    return render_template(
+        "index.html",
+        portfolios=pfs,
+        script_bok=script_bok,
+        div_bok=div_bok
+    )
+
+
+@app.route('/form_savings/', methods=('GET', 'POST'))
+def form_savings():
+    if request.method == 'POST':
+        name = request.form.get("name")
+        start = datetime.date.fromisoformat(request.form.get("start"))
+        amount = float(request.form.get("amount"))
+        recur = float(request.form.get("recur"))
+        apr = float(request.form.get("apr"))
+
+        # Handle errors and send back to index if successful
+        # if num is None:
+        #     flash('Must select a Portfolio')
+        # elif num < 0 or num >= len(pfs):
+        #     flash('Choose a valid portfolio')
+        if not start:
+            flash('Start date is required!')
+        elif not amount:
+            flash('Starting balance is required!')
+        elif not apr:
+            flash('APR is required!')
+        elif not name:
+            flash('Asset Name is required!')
+        else:
+            messages.append({'Name': name, 'Amount': amount, "Recurring": recur, 'APR': apr, 'start': start})
+            pfs[0].add_savings(deposit=amount, start=start, recur=recur, apr=apr, name=name)
+            print("Sav Post Success")
+
+        return redirect(url_for('index'))
+
+    print("Sav Get")
+    return render_template('index.html')
+
+@app.route('/form_investment/', methods=('GET', 'POST'))
+def form_investment():
+    if request.method == 'POST':
+        # num = int(request.form["portfolio"])
+        name = request.form.get("name")
+        start = datetime.date.fromisoformat(request.form.get("start"))
+        amount = float(request.form.get("amount"))
+        recur = float(request.form.get("recur"))
+        apr = float(request.form.get("apr"))
+
+        # Handle errors and send back to index if successful
+        # if num is None:
+        #     flash('Must select a Portfolio')
+        # elif num < 0 or num >= len(pfs):
+        #     flash('Choose a valid portfolio')
+        if not start:
+            flash('Start date is required!')
+        elif not amount:
+            flash('Starting balance is required!')
+        elif not apr:
+            flash('APR is required!')
+        elif not name:
+            flash('Asset Name is required!')
+        else:
+            messages.append({'Name': name, 'Amount': amount, "Recurring": recur, 'APR': apr, 'start': start})
+            pfs[0].add_investment(deposit=amount, start=start, recur=recur, apr=apr, name=name)
+            print("Inv Post Success")
+
+        return redirect(url_for('index'))
+
+    print("Inv Get")
+    return render_template('index.html')
+    
+@app.route('/form_asset/', methods=('GET', 'POST'))
+def form_asset():
+    if request.method == 'POST':
+        # num = int(request.form["portfolio"])
+        name = request.form.get("name")
+        start = datetime.date.fromisoformat(request.form.get("start"))
+        amount = float(request.form.get("amount"))
+        apr = float(request.form.get("apr"))
+
+        # Handle errors and send back to index if successful
+        # if num is None:
+        #     flash('Must select a Portfolio')
+        # elif num < 0 or num >= len(pfs):
+        #     flash('Choose a valid portfolio')
+        if not start:
+            flash('Start date is required!')
+        elif not amount:
+            flash('Starting balance is required!')
+        elif not apr:
+            flash('APR is required!')
+        elif not name:
+            flash('Asset Name is required!')
+        else:
+            messages.append({'Name': name, 'Amount': amount, 'APR': apr, 'start': start})
+            pfs[0].add_asset(init_value=amount, start=start, apr=apr, name=name)
+            print("Ast Post Success")
+
+        return redirect(url_for('index'))
+
+    print("Ast Get")
+    return render_template('index.html')
+
+@app.route('/form_loan/', methods=('GET', 'POST'))
+def form_loan():
+    if request.method == 'POST':
+        # num = int(request.form["portfolio"])
+        name = request.form.get("name")
+        start = datetime.date.fromisoformat(request.form.get("start"))
+        amount = float(request.form.get("amount"))
+        apr = float(request.form.get("apr"))
+        term = int(request.form.get("term"))
+
+        # Handle errors and send back to index if successful
+        # if num is None:
+        #     flash('Must select a Portfolio')
+        # elif num < 0 or num >= len(pfs):
+        #     flash('Choose a valid portfolio')
+        if not start:
+            flash('Start date is required!')
+        elif not amount:
+            flash('Starting balance is required!')
+        elif not apr:
+            flash('APR is required!')
+        elif not name:
+            flash('Asset Name is required!')
+        elif not term:
+            flash('Term length required!')
+        else:
+            messages.append({'Name': name, 'Amount': amount, 'APR': apr, 'start': start, 'term': term})
+            pfs[0].add_loan(amount=amount, start=start, term=term, apr=apr, name=name)
+            print("Loan Post Success")
+
+        return redirect(url_for('index'))
+
+    print("Loan Get")
+    return render_template('index.html')
+
+@app.route('/budget/', methods=['GET', 'POST'])
+def budget():
+    return render_template('budget.html')
+
+@app.route('/house_cost/', methods=['GET', 'POST'])
+def house_cost():
+    return render_template('house_cost.html')
+
+
+def generate_plot():
+    plot = bokeh.plotting.figure(
+        title="Loan Change",
+        x_axis_label='Date (years)',
+        x_axis_type='datetime',
+        y_axis_label='Amount',
+        y_axis_type='linear',
+        width=WIDTH,
+        height=HEIGHT,
+        align="center"
+    )
 
     for scenario in pfs:
         df = scenario.project_net(date=END)
@@ -119,156 +286,15 @@ def index():
     select.ygrid.grid_line_color = None
     select.add_tools(range_tool)
 
-    # plot.y_range.start = df["Net"].min() - ((df["Net"].max()-df["Net"].min()+1) * 0.05)
-    # plot.y_range.end = df["Net"].max() + ((df["Net"].max()-df["Net"].min()+1) * 0.05)
-
     # Attach the Select Tool to the main figure
     col = bokeh.layouts.column(plot, select)
+    return bokeh.embed.components(col)
 
-    # bokeh.plotting.show(col)
-    script_bok, div_bok = bokeh.embed.components(col)
+def generate_pie():
+    return
 
-    # NOTE: Jinja has a feature called auto-escaping, which automatically escapes any values sent
-    # to it, like using "\n" or "\\" in python strings. This can be disabled by either adding the
-    # "|safe" suffix to the end of the Jinja call, or by calling markupsafe.Markup() on the block.
-    # This can also be done by adding an "{% autoescape false %} - {% endautoescape %}" block.
-    return render_template(
-        "index.html",
-        portfolios=pfs,
-        script=script_bok,
-        div=div_bok
-    )
-
-@app.route('/form_savings/', methods=('GET', 'POST'))
-def form_savings():
-    if request.method == 'POST':
-        name = request.form.get("name")
-        start = datetime.date.fromisoformat(request.form.get("start"))
-        amount = float(request.form.get("amount"))
-        recur = float(request.form.get("recur"))
-        apr = float(request.form.get("apr"))
-
-        # Handle errors and send back to index if successful
-        # if num is None:
-        #     flash('Must select a Portfolio')
-        # elif num < 0 or num >= len(pfs):
-        #     flash('Choose a valid portfolio')
-        if not start:
-            flash('Start date is required!')
-        elif not amount:
-            flash('Starting balance is required!')
-        elif not apr:
-            flash('APR is required!')
-        elif not name:
-            flash('Asset Name is required!')
-        else:
-            messages.append({'Name': name, 'Amount': amount, "Recurring": recur, 'APR': apr, 'start': start})
-            pfs[0].add_savings(deposit=amount, start=start, recur=recur, apr=apr, name=name)
-            return redirect(url_for('index'))
-
-    return render_template('form_savings.html')
-
-@app.route('/form_investment/', methods=('GET', 'POST'))
-def form_investment():
-    if request.method == 'POST':
-        # num = int(request.form["portfolio"])
-        name = request.form.get("name")
-        start = datetime.date.fromisoformat(request.form.get("start"))
-        amount = float(request.form.get("amount"))
-        recur = float(request.form.get("recur"))
-        apr = float(request.form.get("apr"))
-
-        # Handle errors and send back to index if successful
-        # if num is None:
-        #     flash('Must select a Portfolio')
-        # elif num < 0 or num >= len(pfs):
-        #     flash('Choose a valid portfolio')
-        if not start:
-            flash('Start date is required!')
-        elif not amount:
-            flash('Starting balance is required!')
-        elif not apr:
-            flash('APR is required!')
-        elif not name:
-            flash('Asset Name is required!')
-        else:
-            messages.append({'Name': name, 'Amount': amount, "Recurring": recur, 'APR': apr, 'start': start})
-            pfs[0].add_investment(deposit=amount, start=start, recur=recur, apr=apr, name=name)
-            return redirect(url_for('index'))
-
-    return render_template('form_investment.html')
-
-    # <a href="{{ url_for('form_budget') }}">Add Budget</a>
-    # <a href="{{ url_for('form_loan') }}">Add Loan</a>
-    
-@app.route('/form_asset/', methods=('GET', 'POST'))
-def form_asset():
-    if request.method == 'POST':
-        # num = int(request.form["portfolio"])
-        name = request.form.get("name")
-        start = datetime.date.fromisoformat(request.form.get("start"))
-        amount = float(request.form.get("amount"))
-        apr = float(request.form.get("apr"))
-
-        # Handle errors and send back to index if successful
-        # if num is None:
-        #     flash('Must select a Portfolio')
-        # elif num < 0 or num >= len(pfs):
-        #     flash('Choose a valid portfolio')
-        if not start:
-            flash('Start date is required!')
-        elif not amount:
-            flash('Starting balance is required!')
-        elif not apr:
-            flash('APR is required!')
-        elif not name:
-            flash('Asset Name is required!')
-        else:
-            messages.append({'Name': name, 'Amount': amount, 'APR': apr, 'start': start})
-            pfs[0].add_asset(init_value=amount, start=start, apr=apr, name=name)
-            return redirect(url_for('index'))
-
-    return render_template('form_asset.html')
-
-@app.route('/form_loan/', methods=('GET', 'POST'))
-def form_loan():
-    if request.method == 'POST':
-        # num = int(request.form["portfolio"])
-        name = request.form.get("name")
-        start = datetime.date.fromisoformat(request.form.get("start"))
-        amount = float(request.form.get("amount"))
-        apr = float(request.form.get("apr"))
-        term = int(request.form.get("term"))
-
-        # Handle errors and send back to index if successful
-        # if num is None:
-        #     flash('Must select a Portfolio')
-        # elif num < 0 or num >= len(pfs):
-        #     flash('Choose a valid portfolio')
-        if not start:
-            flash('Start date is required!')
-        elif not amount:
-            flash('Starting balance is required!')
-        elif not apr:
-            flash('APR is required!')
-        elif not name:
-            flash('Asset Name is required!')
-        elif not term:
-            flash('Term length required!')
-        else:
-            messages.append({'Name': name, 'Amount': amount, 'APR': apr, 'start': start, 'term': term})
-            pfs[0].add_loan(amount=amount, start=start, term=term, apr=apr, name=name)
-            return redirect(url_for('index'))
-
-    return render_template('form_asset.html')
-
-@app.route('/budget/', methods=['GET', 'POST'])
-def budget():
-    return render_template('budget.html')
-
-@app.route('/house_cost/', methods=['GET', 'POST'])
-def house_cost():
-    return render_template('house_cost.html')
+def generate_box():
+    return
 
 if __name__ == "__main__":
     print(RTDIR)

@@ -5,7 +5,67 @@ $(document).ready(function(){
         // one part of the page.
         e.preventDefault()
         $.ajax({
-        url:'./_get_table',
+        url:'./form_savings/',
+        type:'post',
+        data:{'nrow':$("#nrow").val(),
+                'ncol':$("#ncol").val()},
+        success : function(data){
+            // server returns rendered "update_content.html"
+            // which is just pure html, use this to replace the existing
+            // html within the "plot content" div
+            $('#plot-content').html(data)
+        }
+        })
+    });
+});
+
+$(document).ready(function(){
+    $('#calculate').on('click', function(e){
+        // prevent page being reset, we are going to update only
+        // one part of the page.
+        e.preventDefault()
+        $.ajax({
+        url:'./form_investment/',
+        type:'post',
+        data:{'nrow':$("#nrow").val(),
+                'ncol':$("#ncol").val()},
+        success : function(data){
+            // server returns rendered "update_content.html"
+            // which is just pure html, use this to replace the existing
+            // html within the "plot content" div
+            $('#plot-content').html(data)
+        }
+        })
+    });
+});
+
+$(document).ready(function(){
+    $('#calculate').on('click', function(e){
+        // prevent page being reset, we are going to update only
+        // one part of the page.
+        e.preventDefault()
+        $.ajax({
+        url:'./form_asset/',
+        type:'post',
+        data:{'nrow':$("#nrow").val(),
+                'ncol':$("#ncol").val()},
+        success : function(data){
+            // server returns rendered "update_content.html"
+            // which is just pure html, use this to replace the existing
+            // html within the "plot content" div
+            $('#plot-content').html(data)
+        }
+        })
+    });
+});
+
+$(document).ready(function(){
+    $('#calculate').on('click', function(e){
+        // prevent page being reset, we are going to update only
+        // one part of the page.
+        e.preventDefault()
+        $.ajax({
+        url:'./form_loan/',
         type:'post',
         data:{'nrow':$("#nrow").val(),
                 'ncol':$("#ncol").val()},
