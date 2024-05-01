@@ -83,15 +83,6 @@ def index():
     # to it, like using "\n" or "\\" in python strings. This can be disabled by either adding the
     # "|safe" suffix to the end of the Jinja call, or by calling markupsafe.Markup() on the block.
     # This can also be done by adding an "{% autoescape false %} - {% endautoescape %}" block.
-    # global FLAG
-    # if FLAG:
-    #     return render_template(
-    #         "update_content.html",
-    #         portfolios=pfs,
-    #         script_bok=script_bok,
-    #         div_bok=div_bok
-    #     )
-    # FLAG = True
     return render_template(
         "index.html",
         portfolios=pfs,
@@ -128,6 +119,12 @@ def form_savings():
             print("Sav Post Success")
 
         return redirect(url_for('index'))
+        return render_template(
+            "update_content.html",
+            portfolios=pfs,
+            script_bok=script_bok,
+            div_bok=div_bok
+        )
 
     print("Sav Get")
     return render_template('index.html')
