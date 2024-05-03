@@ -9,7 +9,6 @@
 import pandas as pd
 import datetime
 import dataclasses
-from typing import NamedTuple
 from dateutil.rrule import MONTHLY, rrule
 import logging
 
@@ -35,17 +34,17 @@ distribution = {
 
 @dataclasses.dataclass
 class Distribution:
-    Income: float
-    Deduct: float
-    Tax: float
-    Debt: float
-    Housing: float
-    Utilities: float
-    Internet: float
-    Transport: float
-    Food: float
-    Savings: float
-    Invest: float
+    Income: float = 0
+    Deduct: float = 0
+    Tax: float = 0
+    Debt: float = 0
+    Housing: float = 0
+    Utilities: float = 0
+    Internet: float = 0
+    Transport: float = 0
+    Food: float = 0
+    Savings: float = 0
+    Invest: float = 0
 
     def to_df(self):
         elements = [Income, ]
