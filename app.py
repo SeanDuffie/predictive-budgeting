@@ -294,5 +294,4 @@ def generate_box():
     return
 
 if __name__ == "__main__":
-    print(RTDIR)
     app.run(debug=True)
