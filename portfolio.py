@@ -30,7 +30,7 @@ class Portfolio():
         if start is None:
             start = datetime.date.today()
         if end is None:
-            working_years = (67 - age)
+            working_years = 67 - age
             end = datetime.date(year=start.year + working_years, month=1, day=1)
 
         self.start = start
@@ -136,7 +136,7 @@ class Portfolio():
         )
         self.assets[name] = new_asset
 
-        if self.start == None or start < self.start:
+        if self.start is None or start < self.start:
             self.start = start
 
     def mod_asset(self, name: str, amount: float = None, apr: float = None, start: datetime.date = None):
@@ -200,7 +200,7 @@ class Portfolio():
         new_sav = Savings(deposit=deposit, start=start, apr=apr, recur=recur)
         self.investments[name] = new_sav
 
-        if self.start == None or start < self.start:
+        if self.start is None or start < self.start:
             self.start = start
 
     def mod_investment(self, name: str, deposit: float = None, start: datetime.date = None, apr: float = None, recur: float = None):
@@ -267,7 +267,7 @@ class Portfolio():
         new_sav = Savings(deposit=deposit, start=start, apr=apr, recur=recur)
         self.savings[name] = new_sav
 
-        if self.start == None or start < self.start:
+        if self.start is None or start < self.start:
             self.start = start
 
     def mod_savings(self, name: str, deposit: float = None, start: datetime.date = None, apr: float = None, recur: float = None):
@@ -430,7 +430,7 @@ class Portfolio():
         Returns:
             pd.DataFrame: projection of portfolio over time TODO: replace this with a single float or a tuple
         """
-        # Keep track of all events in the plan, this will be used for any plots 
+        # Keep track of all events in the plan, this will be used for any plots
         timeline = pd.DataFrame(
             columns=[
                 "Date",
