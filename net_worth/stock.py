@@ -2,6 +2,8 @@
 
 References:
 - List of Stocks: https://www.nasdaq.com/market-activity/stocks/screener
+- Classification: https://groww.in/blog/how-are-different-stocks-categorized+
+    - https://www.synovus.com/personal/resource-center/financial-newsletters/2020/september/s-p-500-sectors
 """
 import numpy as np
 import pandas as pd
