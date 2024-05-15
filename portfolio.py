@@ -62,7 +62,43 @@ class Portfolio():
         if end > self.end:
             self.end = end
 
+    def mod_loan(self, name: str, amount: float = None, apr: float = None, start: datetime.date = None, term: int = None):
+        """_summary_
+
+        Args:
+            name (str): _description_
+            amount (float, optional): _description_. Defaults to None.
+            apr (float, optional): _description_. Defaults to None.
+            start (datetime.date, optional): _description_. Defaults to None.
+            term (int, optional): _description_. Defaults to None.
+
+        Raises:
+            AssertionError: _description_
+            AssertionError: _description_
+        """
+        if name not in self.loans.keys():
+            raise AssertionError("Specified loan doesn't exist")
+
+        if all([amount is None, apr is None, start is None, term is None]):
+            raise AssertionError("All Parameters are null")
+
+        if any([amount is not None, apr is not None, start is not None, term is not None]):
+            # Make sure that each parameter has a value
+            if amount is None:
+                amount = self.loans[name].loan_amount
+            if apr is None:
+                apr = self.loans[name].mpr*12
+            if start is None:
+                start = self.loans[name].start_date
+            if term is None:
+                term = self.loans[name].term
+
+            # Construct a new Loan object to replace the old one
+            self.loans[name] = Loan(amount=amount, apr=apr, start=start, term=term)
+
     def remove_loan(self):
+        """_summary_
+        """
         # Preview loans to identify which to delete
         logger.info("Previewing Options:")
         for key, loan in self.loans.items():
@@ -103,7 +139,40 @@ class Portfolio():
         if self.start == None or start < self.start:
             self.start = start
 
+    def mod_asset(self, name: str, amount: float = None, apr: float = None, start: datetime.date = None):
+        """_summary_
+
+        Args:
+            name (str): _description_
+            amount (float, optional): _description_. Defaults to None.
+            apr (float, optional): _description_. Defaults to None.
+            start (datetime.date, optional): _description_. Defaults to None.
+
+        Raises:
+            AssertionError: _description_
+            AssertionError: _description_
+        """
+        if name not in self.assets.keys():
+            raise AssertionError("Specified asset doesn't exist")
+
+        if all([amount is None, apr is None, start is None]):
+            raise AssertionError("All Parameters are null")
+
+        if any([amount is not None, apr is not None, start is not None]):
+            # Make sure that each parameter has a value
+            if amount is None:
+                amount = self.assets[name].init_value
+            if apr is None:
+                apr = self.assets[name].expected_mpr*12
+            if start is None:
+                start = self.assets[name].history["Date"][0]
+
+            # Construct a new Asset object to replace the old one
+            self.assets[name] = Asset(init_value=amount, expected_apr=apr, start=start)
+
     def remove_asset(self):
+        """_summary_
+        """
         # Preview savings to identify which to delete
         logger.info("Previewing Options:")
         for key, asset in self.assets.items():
@@ -114,10 +183,19 @@ class Portfolio():
         assert index >= 0
         assert index < len(self.savings)
 
-        # Remove the loan
+        # Remove the asset
         self.assets.pop(index)
 
     def add_investment(self, deposit: float, start: datetime.date, apr: float, recur: float = 0, name: str = "Investments"):
+        """_summary_
+
+        Args:
+            deposit (float): _description_
+            start (datetime.date): _description_
+            apr (float): _description_
+            recur (float, optional): _description_. Defaults to 0.
+            name (str, optional): _description_. Defaults to "Investments".
+        """
         # Prompt for additional investments
         new_sav = Savings(deposit=deposit, start=start, apr=apr, recur=recur)
         self.investments[name] = new_sav
@@ -125,7 +203,43 @@ class Portfolio():
         if self.start == None or start < self.start:
             self.start = start
 
+    def mod_investment(self, name: str, deposit: float = None, start: datetime.date = None, apr: float = None, recur: float = None):
+        """_summary_
+
+        Args:
+            name (str): _description_
+            deposit (float, optional): _description_. Defaults to None.
+            start (datetime.date, optional): _description_. Defaults to None.
+            apr (float, optional): _description_. Defaults to None.
+            recur (float, optional): _description_. Defaults to None.
+
+        Raises:
+            AssertionError: _description_
+            AssertionError: _description_
+        """
+        if name not in self.investments.keys():
+            raise AssertionError("Specified Investment doesn't exist")
+
+        if all([deposit is None, apr is None, start is None]):
+            raise AssertionError("All Parameters are null")
+
+        if any([deposit is not None, apr is not None, start is not None]):
+            # Make sure that each parameter has a value
+            if deposit is None:
+                deposit = self.investments[name].history["Balance"][0]
+            if apr is None:
+                apr = self.investments[name].mpr*12
+            if start is None:
+                start = self.investments[name].history["Date"][0]
+            if recur is None:
+                recur = self.investments[name].recur
+
+            # Construct a new Investment object to replace the old one
+            self.investments[name] = Savings(deposit=deposit, start=start, apr=apr, recur=recur)
+
     def remove_investment(self):
+        """_summary_
+        """
         # Preview savings to identify which to delete
         logger.info("Previewing Options:")
         for key, inv in self.investments.items():
@@ -136,7 +250,7 @@ class Portfolio():
         assert index >= 0
         assert index < len(self.investments)
 
-        # Remove the loan
+        # Remove the investment
         self.investments.pop(index)
 
     def add_savings(self, deposit: float, start: datetime.date, apr: float, recur: float = 0, name: str = "Savings"):
@@ -156,7 +270,43 @@ class Portfolio():
         if self.start == None or start < self.start:
             self.start = start
 
+    def mod_savings(self, name: str, deposit: float = None, start: datetime.date = None, apr: float = None, recur: float = None):
+        """_summary_
+
+        Args:
+            name (str): _description_
+            deposit (float, optional): _description_. Defaults to None.
+            start (datetime.date, optional): _description_. Defaults to None.
+            apr (float, optional): _description_. Defaults to None.
+            recur (float, optional): _description_. Defaults to None.
+
+        Raises:
+            AssertionError: _description_
+            AssertionError: _description_
+        """
+        if name not in self.savings.keys():
+            raise AssertionError("Specified Investment doesn't exist")
+
+        if all([deposit is None, apr is None, start is None]):
+            raise AssertionError("All Parameters are null")
+
+        if any([deposit is not None, apr is not None, start is not None]):
+            # Make sure that each parameter has a value
+            if deposit is None:
+                deposit = self.savings[name].history["Balance"][0]
+            if apr is None:
+                apr = self.savings[name].mpr*12
+            if start is None:
+                start = self.savings[name].history["Date"][0]
+            if recur is None:
+                recur = self.savings[name].recur
+
+            # Construct a new Savings object to replace the old one
+            self.savings[name] = Savings(deposit=deposit, start=start, apr=apr, recur=recur)
+
     def remove_savings(self):
+        """_summary_
+        """
         # Preview savings to identify which to delete
         logger.info("Previewing Options:")
         for key, val in self.savings.items():
@@ -167,10 +317,19 @@ class Portfolio():
         assert index >= 0
         assert index < len(self.savings)
 
-        # Remove the loan
+        # Remove the savings account
         self.savings.pop(index)
 
     def update_all(self, date):
+        """_summary_
+
+        TODO: I don't like this, the portfolio should have a set date for start, retirement, and expected remaining time
+                And by generating it all on "update_all" it will be cumbersome to make any dynamic changes.
+                Instead, it should be generated either on call or on creation/modification
+
+        Args:
+            date (_type_): _description_
+        """
         for key, val in self.savings.items():
             val.update(date)
 
@@ -457,4 +616,4 @@ if __name__ == "__main__":
 
     logger.info("HYSA history:\n%s\n", portfolio.savings["American Express HYSA"].history)
     logger.info("ETRADE history:\n%s\n", portfolio.savings["Stocks"].history)
-    logger.info("HTML:\n%s", portfolio.to_html())
+    logger.info("HTML:\n%s", portfolio.to_html("Portfolio"))
