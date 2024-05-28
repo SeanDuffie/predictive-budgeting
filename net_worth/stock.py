@@ -20,7 +20,20 @@ class Stock:
     def refresh(self) -> None:
         """ Updates the current stock data from YFinance """
         self.stock = yf.Ticker(self.title)
-        self.df = self.stock.history
+        self.df = self.stock.history()
+        print(self.title)
+        print("UP/Down")
+        print(self.stock.get_upgrades_downgrades())
+        # print("\n\n")
+        # print(self.stock.get_analyst_price_target())
+        print("\n\nBalance Sheet")
+        print(self.stock.get_balance_sheet())
+        print("\n\nCalendar")
+        print(self.stock.get_calendar())
+        print("\n\nHistory")
+        print(self.df)
+        print(self.stock.history_metadata)
+        print("\n\n\n\n")
 
         # self.SMA("Close", 100)
 
@@ -112,6 +125,8 @@ class Stock:
 if __name__ == "__main__":
     s1 = Stock("T")
     s2 = Stock("MSFT")
+    s3 = Stock("VFIAX")
 
-    s1.print_history()
-    s2.print_history()
+    # s1.print_history()
+    # s2.print_history()
+    # s3.print_history()
