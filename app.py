@@ -119,12 +119,12 @@ def form_savings():
             print("Sav Post Success")
 
         return redirect(url_for('index'))
-        return render_template(
-            "update_content.html",
-            portfolios=pfs,
-            script_bok=script_bok,
-            div_bok=div_bok
-        )
+        # return render_template(
+        #     "update_content.html",
+        #     portfolios=pfs,
+        #     script_bok=script_bok,
+        #     div_bok=div_bok
+        # )
 
     print("Sav Get")
     return render_template('index.html')
@@ -237,6 +237,14 @@ def budget():
 def house_cost():
     return render_template('house_cost.html')
 
+
+start_date = bokeh.models.DatePicker(title="Start Date", value="2023-05-25", min_date="2000-05-25", max_date="2100-05-25")
+retirement_date = bokeh.models.DatePicker(title="Retirement Date", value="2067-05-25", min_date="2000-05-25", max_date="2100-05-25")
+init = bokeh.models.TextInput(title="Initial Deposit")
+recur = bokeh.models.TextInput(title="Recurring Deposit")
+controls = [start_date, retirement_date, init, recur]
+def update_plot():
+    pfs[0].mod_savings
 
 def generate_plot():
     plot = bokeh.plotting.figure(
