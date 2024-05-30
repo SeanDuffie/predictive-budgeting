@@ -7,6 +7,7 @@ References:
 """
 import numpy as np
 import pandas as pd
+import yahoofinancials
 import yfinance as yf
 
 
@@ -21,21 +22,56 @@ class Stock:
         """ Updates the current stock data from YFinance """
         self.stock = yf.Ticker(self.title)
         self.df = self.stock.history()
-        print(self.title)
-        print("UP/Down")
-        print(self.stock.get_upgrades_downgrades())
-        # print("\n\n")
-        # print(self.stock.get_analyst_price_target())
-        print("\n\nBalance Sheet")
-        print(self.stock.get_balance_sheet())
-        print("\n\nCalendar")
-        print(self.stock.get_calendar())
-        print("\n\nHistory")
-        print(self.df)
-        print(self.stock.history_metadata)
-        print("\n\n\n\n")
+        data = yahoofinancials.YahooFinancials(self.title)
+        self.financials = data.get_financial_stmts(frequency='quarterly', statement_type='income')
 
         # self.SMA("Close", 100)
+    def get_updown(self):
+        updown = self.stock.get_upgrades_downgrades()
+
+        print(f"{self.title} | UP/DOWN")
+        print(updown)
+        print("\n")
+        return updown
+
+    def get_target(self):
+        target = self.stock.get_analyst_price_target()
+
+        print(f"{self.title} | TARGET")
+        print(target)
+        print("\n")
+        return target
+
+    def get_bal_sheet(self):
+        balsheet = self.stock.get_balance_sheet()
+
+        print(f"{self.title} | BALANCE SHEET")
+        print(balsheet)
+        print("\n")
+        return balsheet
+
+    def get_calendar(self):
+        calendar = self.stock.get_calendar()
+
+        print(f"{self.title} | CALENDAR")
+        print(calendar)
+        print("\n")
+        return calendar
+
+    def get_financials(self):
+        financials = self.financials
+
+        print(f"{self.title} | FINANCIALS")
+        print(financials)
+        print("\n")
+        return financials
+
+    def get_all(self):
+        # self.get_updown()
+        # self.get_target()
+        # self.get_bal_sheet()
+        # self.get_calendar()
+        self.get_financials()
 
     def SMA(self, feature: str, window_size: int) -> pd.DataFrame:
         """ Simple Moving Average
@@ -126,6 +162,8 @@ if __name__ == "__main__":
     s1 = Stock("T")
     s2 = Stock("MSFT")
     s3 = Stock("VFIAX")
+
+    s2.get_all()
 
     # s1.print_history()
     # s2.print_history()
