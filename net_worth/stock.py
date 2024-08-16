@@ -21,12 +21,12 @@ class Stock:
         self.title = title
         self.refresh()
 
-    def refresh(self) -> None:
+    def refresh(self, period: str = "1y") -> None:
         """ Updates the current stock data from YFinance """
         print("Get Ticker")
         self.stock = yf.Ticker(self.title)
         print("Get History")
-        self.df = self.stock.history()
+        self.df = self.stock.history(period=period)
 
         # print("Yahoo Financials")
         # data = yahoofinancials.YahooFinancials(self.title)
@@ -153,7 +153,7 @@ class Stock:
         # get stock info
         print(self.stock.info)
 
-    def print_history(self):
+    def print_history(self, period: str="max"):
         """
         returns:
                     Open    High    Low    Close      Volume  Dividends  Splits
@@ -165,7 +165,7 @@ class Stock:
         2019-11-13  146.74  147.46  146.30  147.31    16295622        0.0     0.0
         """
         # get historical market data, here max is 5 years.
-        print(self.stock.history(period="max"))
+        print(self.stock.history(period=period))
 
     def plot(self, start: datetime.datetime = None, stop: datetime.datetime = None):
         if start is None:
@@ -177,28 +177,34 @@ class Stock:
         # TODO: Replace this with useful data
         fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, sharex = True)
         fig.suptitle(f"{self.title} over time")
-        ax1.plot(self.df.index, self.df["Open"])
-        ax2.plot(self.df.index, self.df["Close"], 'tab:orange')
-        ax3.plot(self.df.index, self.df["High"], 'tab:green')
-        ax4.plot(self.df.index, self.df["Low"], 'tab:red')
+        ax1.plot(self.df.index, self.df["Close"])
+        ax1.set_title("Stock Price")
+        ax2.plot(self.df.index, self.df["High"]-self.df["Low"], 'tab:orange')
+        ax2.set_title("Volitility")
+        ax3.plot(self.df.index, self.df["Open"]-self.df["Low"], 'tab:green')
+        ax3.set_title("Potential Gains")
+        ax4.plot(self.df.index, self.df["Close"]-self.df["Open"], 'tab:red')
+        ax4.set_title("Change")
 
         for ax in fig.get_axes():
             ax.label_outer()
         fig.autofmt_xdate()
+        fig.tight_layout()
         fig.show()
-        a = input("Hit enter to quit...")
 
 if __name__ == "__main__":
     # s1 = Stock("T")
     # s1.print_history()
 
-    print("Started")
-    s2 = Stock("MSFT")
-    print("History")
-    s2.print_history()
-    s2.plot()
-    # print("All")
-    # s2.get_all()
+    s2 = Stock("T")
+    while True:
+        per = input("Enter next period: ")
+        if per == "":
+            break
+
+        s2.refresh(period=per)
+        s2.print_history("5y")
+        s2.plot()
 
     # s3 = Stock("VFIAX")
     # s3.print_history()
