@@ -6,11 +6,12 @@
     FIXME: The budget should be calculated on a monthly basis
             this would solve the problems of paying of the loans or filling the emergency fund
 """
-import pandas as pd
-import datetime
 import dataclasses
-from dateutil.rrule import MONTHLY, rrule
+import datetime
 import logging
+
+import pandas as pd
+from dateutil.rrule import MONTHLY, rrule
 
 from .income import Income
 
@@ -98,8 +99,8 @@ class Budget():
         self.plan["Date"] = pd.to_datetime(self.plan["Date"])
         elements = dist.to_df()
 
-    def get_month(self, date: datetime.date):
-        return self.plan[self.plan.loc
+    # def get_month(self, date: datetime.date):
+    #     return self.plan[self.plan.loc
 
 
     def generate_budget(self):
