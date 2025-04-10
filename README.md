@@ -30,5 +30,7 @@ TODO: Make this more permanent with a port forward and noip.com?
 2. Stocks
     - [x] Use yfinance API to access stock data
     - [ ] Milestones to indicate potential causes of pattern changes
+    - [ ] Bump Charts, Candlestick Charts
+    - [ ]
 3. Loans
     - [ ] Amortization chart?

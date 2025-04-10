@@ -5,9 +5,12 @@ References:
 - Classification: https://groww.in/blog/how-are-different-stocks-categorized+
     - https://www.synovus.com/personal/resource-center/financial-newsletters/2020/september/s-p-500-sectors
 """
+import datetime
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import yahoofinancials
+# import yahoofinancials
 import yfinance as yf
 
 
@@ -18,12 +21,17 @@ class Stock:
         self.title = title
         self.refresh()
 
-    def refresh(self) -> None:
+    def refresh(self, period: str = "1y") -> None:
         """ Updates the current stock data from YFinance """
+        print("Get Ticker")
         self.stock = yf.Ticker(self.title)
-        self.df = self.stock.history()
-        data = yahoofinancials.YahooFinancials(self.title)
-        self.financials = data.get_financial_stmts(frequency='quarterly', statement_type='income')
+        print("Get History")
+        self.df = self.stock.history(period=period)
+
+        # print("Yahoo Financials")
+        # data = yahoofinancials.YahooFinancials(self.title)
+        # print("Financial Statements")
+        # self.financials = data.get_financial_stmts(frequency='quarterly', statement_type='income')
 
         # self.SMA("Close", 100)
     def get_updown(self):
@@ -58,20 +66,21 @@ class Stock:
         print("\n")
         return calendar
 
-    def get_financials(self):
-        financials = self.financials
+    # def get_financials(self):
+    #     financials = self.financials
 
-        print(f"{self.title} | FINANCIALS")
-        print(financials)
-        print("\n")
-        return financials
+    #     print(f"{self.title} | FINANCIALS")
+    #     print(financials)
+    #     print("\n")
+    #     return financials
 
     def get_all(self):
         # self.get_updown()
         # self.get_target()
         # self.get_bal_sheet()
         # self.get_calendar()
-        self.get_financials()
+        # self.get_financials()
+        pass
 
     def SMA(self, feature: str, window_size: int) -> pd.DataFrame:
         """ Simple Moving Average
@@ -144,7 +153,7 @@ class Stock:
         # get stock info
         print(self.stock.info)
 
-    def print_history(self):
+    def print_history(self, period: str="max"):
         """
         returns:
                     Open    High    Low    Close      Volume  Dividends  Splits
@@ -156,15 +165,46 @@ class Stock:
         2019-11-13  146.74  147.46  146.30  147.31    16295622        0.0     0.0
         """
         # get historical market data, here max is 5 years.
-        print(self.stock.history(period="max"))
+        print(self.stock.history(period=period))
+
+    def plot(self, start: datetime.datetime = None, stop: datetime.datetime = None):
+        if start is None:
+            start = self.df.index[0]
+        if stop is None:
+            stop = self.df.index[len(self.df.index)-1]
+        # df = self.df.index.to_frame().reset_index(drop=True)
+
+        # TODO: Replace this with useful data
+        fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, sharex = True)
+        fig.suptitle(f"{self.title} over time")
+        ax1.plot(self.df.index, self.df["Close"])
+        ax1.set_title("Stock Price")
+        ax2.plot(self.df.index, self.df["High"]-self.df["Low"], 'tab:orange')
+        ax2.set_title("Volitility")
+        ax3.plot(self.df.index, self.df["Open"]-self.df["Low"], 'tab:green')
+        ax3.set_title("Potential Gains")
+        ax4.plot(self.df.index, self.df["Close"]-self.df["Open"], 'tab:red')
+        ax4.set_title("Change")
+
+        for ax in fig.get_axes():
+            ax.label_outer()
+        fig.autofmt_xdate()
+        fig.tight_layout()
+        fig.show()
 
 if __name__ == "__main__":
-    s1 = Stock("T")
-    s2 = Stock("MSFT")
-    s3 = Stock("VFIAX")
-
-    s2.get_all()
-
+    # s1 = Stock("T")
     # s1.print_history()
-    # s2.print_history()
+
+    s2 = Stock("T")
+    while True:
+        per = input("Enter next period: ")
+        if per == "":
+            break
+
+        s2.refresh(period=per)
+        s2.print_history("5y")
+        s2.plot()
+
+    # s3 = Stock("VFIAX")
     # s3.print_history()
