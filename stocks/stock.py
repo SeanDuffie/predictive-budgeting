@@ -1,9 +1,17 @@
+""" @file stock.py
+"""
+import bokeh.sampledata
 import pandas as pd
-
 from bokeh.plotting import figure, show
-from bokeh.sampledata.stocks import MSFT
 
-df = pd.DataFrame(MSFT)[60:120]
+try:
+    from bokeh.sampledata.stocks import MSFT
+except RuntimeError:
+    bokeh.sampledata.download(progress=True)
+    from bokeh.sampledata.stocks import MSFT
+
+# Change the index to pick a different range of quarters
+df = pd.DataFrame(MSFT)[0:180]
 df["date"] = pd.to_datetime(df["date"])
 
 inc = df.close > df.open

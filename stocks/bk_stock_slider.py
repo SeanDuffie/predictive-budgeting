@@ -1,18 +1,18 @@
 """ @file bk_stock_slider
     @author unknown, modified by Sean Duffie
-    @brief This is an example 
+    @brief This is an example bokeh plot that generates an adjustable graph that I want to use for
+    my portfolio.
 """
 import os
 
 import bokeh.embed
+import bokeh.sampledata
 import numpy as np
 import pandas as pd
 from bokeh.layouts import column, layout
 from bokeh.models import ColumnDataSource, DatetimeTickFormatter, RangeTool
 from bokeh.plotting import figure, show
 
-
-import bokeh.sampledata
 bokeh.sampledata.download(progress=True)
 from bokeh.sampledata.stocks import AAPL
 
