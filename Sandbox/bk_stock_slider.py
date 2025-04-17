@@ -1,17 +1,19 @@
-"""_summary_
+""" @file bk_stock_slider
+    @author unknown, modified by Sean Duffie
+    @brief This is an example 
 """
 import os
-import numpy as np
 
 import bokeh.embed
+import numpy as np
 import pandas as pd
+from bokeh.layouts import column, layout
 from bokeh.models import ColumnDataSource, DatetimeTickFormatter, RangeTool
-from bokeh.layouts import layout, column
 from bokeh.plotting import figure, show
 
-# import bokeh.sampledata
-# bokeh.sampledata.download(True)
 
+import bokeh.sampledata
+bokeh.sampledata.download(progress=True)
 from bokeh.sampledata.stocks import AAPL
 
 RTDIR = os.path.dirname(__file__)
