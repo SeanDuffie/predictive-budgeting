@@ -43,7 +43,7 @@ pf.add_savings(deposit=12000, start=datetime.date(2024, 5, 25), apr=.0425, recur
 # pf.add_asset(init_value=400000, start=datetime.date(2026, 5, 25), apr=.05, name="House")
 ######################################
 
-with open(join(dirname(__file__), "description.html")) as file:
+with open(join(dirname(__file__), "web/description.html")) as file:
     desc = bokeh.models.Div(text=file.read(), sizing_mode="stretch_width")
 
 # # Create Input controls

@@ -18,6 +18,7 @@
 import datetime
 import logging
 import os
+import secrets
 from math import radians
 
 import bokeh.embed
@@ -44,7 +45,7 @@ app = Flask(
     static_folder=f"{RTDIR}/web/static",
     template_folder=f"{RTDIR}/web/templates"
 )
-app.config['SECRET_KEY'] = '1d2e3382586f37723ba8aad13ece71d521e2b6fd1d0e7407'
+app.config['SECRET_KEY'] = secrets.token_hex()
 
 AGE = 23
 START = datetime.date(2024, 2, 1)
